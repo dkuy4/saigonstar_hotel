@@ -1,0 +1,93 @@
+{
+ "passed": [
+  "Cả 21 bảng có khóa chính khai báo rõ.",
+  "15 bảng dùng NUMBER(19) GENERATED ALWAYS AS IDENTITY; bảng còn lại dùng khóa tự nhiên hoặc khóa ghép: bo_dem_hoa_don, cau_hinh_he_thong, loai_phong_dich, ngon_ngu, noi_dung_dich, ty_gia",
+  "Mọi cột identity là NUMBER(19) (tương đương BIGINT).",
+  "Cả 24 khóa ngoại nêu rõ ON DELETE (CASCADE hoặc /*RESTRICT*/).",
+  "Mọi khóa ngoại trỏ đúng cột khóa chính hoặc duy nhất của bảng cha.",
+  "Cả 24 cột khóa ngoại đều có chỉ mục dẫn đầu (chỉ mục riêng, khóa chính hoặc unique).",
+  "Không có chỉ mục nào bị chỉ mục khác phủ hoàn toàn.",
+  "Mọi cột tiền là NUMBER(15,2); không có FLOAT hay BINARY_DOUBLE.",
+  "Mọi thời điểm là TIMESTAMP WITH TIME ZONE; DATE chỉ dùng cho ngày hiệu lực và ngày tỷ giá: bang_gia.hieu_luc_tu, bang_gia.hieu_luc_den, ty_gia.ngay_cap_nhat, cau_hinh_he_thong.hieu_luc_tu, cau_hinh_he_thong.hieu_luc_den",
+  "Cả 3 cột BOOLEAN có NOT NULL và DEFAULT rõ ràng.",
+  "CLOB chỉ dùng cho nội dung không giới hạn: nhat_ky_kiem_toan.gia_tri_cu, nhat_ky_kiem_toan.gia_tri_moi, noi_dung_dich.noi_dung",
+  "31 cột cho phép NULL, mỗi cột có lý do nghiệp vụ (xem báo cáo).",
+  "Mọi mã nghiệp vụ (mã tra cứu, mã phòng, mã hạng, tên đăng nhập, số hóa đơn, mã giao dịch cổng, mã vai trò) có UNIQUE.",
+  "Không có chỉ mục đơn trên cột ít giá trị; chỉ mục trạng thái đều là chỉ mục ghép với thời điểm hoặc chỉ mục hàm.",
+  "Mọi khóa chính (pk_), khóa ngoại (fk_), unique (uix_), check (ck_), chỉ mục (idx_) theo quy ước <tiền tố>_<bảng>_<cột>."
+ ],
+ "warn": [
+  "Bảng chưa có cột thời điểm tạo mặc định SYSTIMESTAMP: ['bo_dem_hoa_don', 'ty_gia']",
+  "14 tên ràng buộc hoặc chỉ mục dài hơn 30 ký tự (hợp lệ từ Oracle 12.2 trở lên, 23ai cho tới 128 byte); dài nhất 40 ký tự."
+ ],
+ "error": [],
+ "nullable": [
+  "nguoi_dung.khoa_den",
+  "loai_phong.suc_chua",
+  "loai_phong.anh_url",
+  "loai_phong_dich.mo_ta",
+  "loai_phong_dich.tien_nghi",
+  "bang_gia.hieu_luc_den",
+  "phong.ghi_chu",
+  "khach_hang.quoc_tich",
+  "giay_to_khach.anh_url",
+  "dat_phong.han_giu_cho",
+  "dat_phong.dong_y_chinh_sach_luc",
+  "dat_phong.nhan_thuc_te",
+  "dat_phong.tra_thuc_te",
+  "dat_phong.ly_do_huy",
+  "dat_phong.nguoi_tao_id",
+  "giao_dich_thanh_toan.ma_tham_chieu_cong",
+  "hoan_tien.nguoi_de_nghi_id",
+  "hoan_tien.nguoi_duyet_id",
+  "hoa_don.hoa_don_goc_id",
+  "chi_tiet_hoa_don.thue_suat",
+  "nhat_ky_kiem_toan.gia_tri_cu",
+  "nhat_ky_kiem_toan.gia_tri_moi",
+  "nhat_ky_kiem_toan.ly_do",
+  "nhat_ky_kiem_toan.nguoi_thuc_hien_id",
+  "nhat_ky_kiem_toan.dia_chi_ip",
+  "cau_hinh_he_thong.hieu_luc_den",
+  "cau_hinh_he_thong.gia_tri_so",
+  "cau_hinh_he_thong.gia_tri_chu",
+  "cau_hinh_he_thong.mo_ta",
+  "hang_doi_email.lan_gui_cuoi",
+  "hang_doi_email.loi"
+ ],
+ "long_names": [
+  "fk_loai_phong_dich_loai_phong_id",
+  "fk_giao_dich_thanh_toan_dat_phong_id",
+  "fk_nhat_ky_kiem_toan_nguoi_thuc_hien_id",
+  "idx_khach_hang_ngon_ngu_uu_tien",
+  "idx_giay_to_khach_khach_hang_id",
+  "idx_dat_phong_doan_dat_phong_id",
+  "idx_giao_dich_thanh_toan_dat_phong_id",
+  "idx_chi_tiet_hoa_don_hoa_don_id",
+  "idx_nhat_ky_kiem_toan_nguoi_thuc_hien_id",
+  "idx_hang_doi_email_dat_phong_id",
+  "idx_dat_phong_trang_thai_tu_luc",
+  "idx_nhat_ky_kiem_toan_bang_khoa_dong",
+  "idx_nhat_ky_kiem_toan_thoi_diem",
+  "idx_hang_doi_email_trang_thai_ngay_tao"
+ ],
+ "srs": {
+  "thieu_trong_ddl": {},
+  "them_so_voi_srs": {
+   "cau_hinh_he_thong": [
+    "gia_tri_chu",
+    "gia_tri_so",
+    "hieu_luc_tu",
+    "ma_tham_so"
+   ]
+  },
+  "bang_them": [],
+  "bang_thieu": []
+ },
+ "stats": {
+  "bang": 21,
+  "cot": 155,
+  "fk": 24,
+  "index": 30,
+  "check": 40
+ }
+}

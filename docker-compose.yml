@@ -1,0 +1,57 @@
+services:
+  oracle:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle23ai
+    restart: unless-stopped
+    ports:
+      - "1521:1521"
+    environment:
+      - ORACLE_PWD=1
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    networks:
+      - hotel-net
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hotel_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ORA_USER=hotel_app
+      - ORA_PASSWORD=HotelApp123#
+      - ORA_DSN=oracle:1521/FREEPDB1
+      - ORA_SCHEMA=HOTEL_OWNER
+      - JWT_SECRET=hotel_jwt_secret_key_change_in_production_2026_super_secure
+      - BACKEND_CORS_ORIGINS=["*"]
+    depends_on:
+      - oracle
+    networks:
+      - hotel-net
+
+  web:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: hotel_web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - api
+    networks:
+      - hotel-net
+
+networks:
+  hotel-net:
+    driver: bridge
+
+volumes:
+  oracle-data:
+    external: true

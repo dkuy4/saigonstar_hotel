@@ -1,0 +1,245 @@
+# ERD hệ thống đặt phòng khách sạn
+
+21 bảng, 24 khóa ngoại. Sinh từ `01_schema.sql` bằng `tools/gen_erd.py`; sơ đồ hình ảnh ở `ERD.png` (hoặc `ERD.svg` phóng to không vỡ nét).
+
+![ERD](ERD.png)
+
+## Các nhóm bảng
+
+| Nhóm | Bảng |
+|---|---|
+| Danh mục và cấu hình | NGON_NGU, CAU_HINH_HE_THONG, NOI_DUNG_DICH, TY_GIA |
+| Tài khoản | VAI_TRO, NGUOI_DUNG |
+| Phòng và giá | LOAI_PHONG, LOAI_PHONG_DICH, BANG_GIA, PHONG |
+| Đặt phòng | KHACH_HANG, GIAY_TO_KHACH, DAT_PHONG, DAT_PHONG_DOAN, HANG_DOI_EMAIL |
+| Thanh toán và hóa đơn | GIAO_DICH_THANH_TOAN, HOAN_TIEN, HOA_DON, CHI_TIET_HOA_DON, BO_DEM_HOA_DON |
+| Kiểm toán | NHAT_KY_KIEM_TOAN |
+
+## Sơ đồ Mermaid
+
+Dán vào GitHub, VS Code (Markdown Preview Mermaid) hoặc mermaid.live để xem. Quan hệ `||--o{` nghĩa là khóa ngoại cho phép NULL.
+
+```mermaid
+erDiagram
+  VAI_TRO ||--|{ NGUOI_DUNG : "vai_tro_id"
+  LOAI_PHONG ||--|{ LOAI_PHONG_DICH : "loai_phong_id"
+  NGON_NGU ||--|{ LOAI_PHONG_DICH : "ngon_ngu"
+  LOAI_PHONG ||--|{ BANG_GIA : "loai_phong_id"
+  LOAI_PHONG ||--|{ PHONG : "loai_phong_id"
+  NGON_NGU ||--|{ KHACH_HANG : "ngon_ngu_uu_tien"
+  KHACH_HANG ||--|{ GIAY_TO_KHACH : "khach_hang_id"
+  KHACH_HANG ||--|{ DAT_PHONG : "khach_hang_id"
+  NGON_NGU ||--|{ DAT_PHONG : "ngon_ngu"
+  NGUOI_DUNG ||--o{ DAT_PHONG : "nguoi_tao_id"
+  DAT_PHONG ||--|{ DAT_PHONG_DOAN : "dat_phong_id"
+  PHONG ||--|{ DAT_PHONG_DOAN : "phong_id"
+  DAT_PHONG ||--|{ GIAO_DICH_THANH_TOAN : "dat_phong_id"
+  GIAO_DICH_THANH_TOAN ||--|{ HOAN_TIEN : "giao_dich_id"
+  NGUOI_DUNG ||--o{ HOAN_TIEN : "nguoi_de_nghi_id"
+  NGUOI_DUNG ||--o{ HOAN_TIEN : "nguoi_duyet_id"
+  DAT_PHONG ||--|{ HOA_DON : "dat_phong_id"
+  HOA_DON ||--o{ HOA_DON : "hoa_don_goc_id"
+  NGUOI_DUNG ||--|{ HOA_DON : "nguoi_lap_id"
+  HOA_DON ||--|{ CHI_TIET_HOA_DON : "hoa_don_id"
+  NGUOI_DUNG ||--o{ NHAT_KY_KIEM_TOAN : "nguoi_thuc_hien_id"
+  NGON_NGU ||--|{ NOI_DUNG_DICH : "ngon_ngu"
+  DAT_PHONG ||--|{ HANG_DOI_EMAIL : "dat_phong_id"
+  NGON_NGU ||--|{ HANG_DOI_EMAIL : "ngon_ngu"
+  NGON_NGU {
+    VARCHAR2_10 ma_ngon_ngu PK
+    VARCHAR2_50 ten_ngon_ngu
+    TSTZ ngay_tao
+  }
+  VAI_TRO {
+    NUMBER_19 vai_tro_id PK
+    VARCHAR2_20 ma_vai_tro
+    VARCHAR2_50 ten_vai_tro
+    TSTZ ngay_tao
+  }
+  NGUOI_DUNG {
+    NUMBER_19 nguoi_dung_id PK
+    VARCHAR2_50 ten_dang_nhap
+    VARCHAR2_255 mat_khau_bam
+    VARCHAR2_100 ho_ten
+    NUMBER_19 vai_tro_id FK
+    VARCHAR2_20 trang_thai
+    NUMBER_3 so_lan_sai
+    TSTZ khoa_den
+    TSTZ ngay_tao
+  }
+  LOAI_PHONG {
+    NUMBER_19 loai_phong_id PK
+    VARCHAR2_20 ma_hang
+    NUMBER_2 suc_chua
+    BOOLEAN cho_thue_gio
+    VARCHAR2_500 anh_url
+    TSTZ ngay_tao
+  }
+  LOAI_PHONG_DICH {
+    NUMBER_19 loai_phong_id PK
+    VARCHAR2_10 ngon_ngu PK
+    VARCHAR2_100 ten
+    VARCHAR2_1000 mo_ta
+    VARCHAR2_1000 tien_nghi
+    TSTZ ngay_tao
+  }
+  BANG_GIA {
+    NUMBER_19 bang_gia_id PK
+    NUMBER_19 loai_phong_id FK
+    VARCHAR2_10 loai_gia
+    NUMBER_15_2 don_gia
+    DATE hieu_luc_tu
+    DATE hieu_luc_den
+    TSTZ ngay_tao
+  }
+  PHONG {
+    NUMBER_19 phong_id PK
+    VARCHAR2_10 ma_phong
+    NUMBER_2 so_tang
+    NUMBER_19 loai_phong_id FK
+    VARCHAR2_20 trang_thai
+    BOOLEAN dang_hoat_dong
+    VARCHAR2_500 ghi_chu
+    TSTZ ngay_tao
+  }
+  KHACH_HANG {
+    NUMBER_19 khach_hang_id PK
+    VARCHAR2_100 ho_ten
+    VARCHAR2_20 sdt
+    VARCHAR2_254 email
+    VARCHAR2_60 quoc_tich
+    VARCHAR2_10 ngon_ngu_uu_tien FK
+    TSTZ ngay_tao
+  }
+  GIAY_TO_KHACH {
+    NUMBER_19 giay_to_id PK
+    NUMBER_19 khach_hang_id FK
+    VARCHAR2_30 loai_giay_to
+    VARCHAR2_512 so_giay_to
+    VARCHAR2_500 anh_url
+    TSTZ ngay_tao
+  }
+  DAT_PHONG {
+    NUMBER_19 dat_phong_id PK
+    VARCHAR2_20 ma_tra_cuu
+    NUMBER_19 khach_hang_id FK
+    VARCHAR2_10 loai_dat
+    VARCHAR2_10 kenh_dat
+    VARCHAR2_20 trang_thai
+    TSTZ tu_luc
+    TSTZ den_luc
+    TSTZ han_giu_cho
+    NUMBER_2 so_khach
+    NUMBER_15_2 don_gia_ap_dung
+    NUMBER_15_2 don_gia_ngay_ap_dung
+    NUMBER_15_2 tien_phong
+    NUMBER_5_4 thue_suat
+    NUMBER_15_2 tien_vat
+    NUMBER_15_2 tong_tien
+    VARCHAR2_10 ngon_ngu FK
+    TSTZ dong_y_chinh_sach_luc
+    TSTZ nhan_thuc_te
+    TSTZ tra_thuc_te
+    VARCHAR2_500 ly_do_huy
+    NUMBER_19 nguoi_tao_id FK
+    TSTZ ngay_tao
+  }
+  DAT_PHONG_DOAN {
+    NUMBER_19 doan_id PK
+    NUMBER_19 dat_phong_id FK
+    NUMBER_19 phong_id FK
+    TSTZ tu_luc
+    TSTZ den_luc
+    TSTZ ngay_tao
+  }
+  GIAO_DICH_THANH_TOAN {
+    NUMBER_19 giao_dich_id PK
+    NUMBER_19 dat_phong_id FK
+    VARCHAR2_10 kenh
+    VARCHAR2_20 phuong_thuc
+    NUMBER_15_2 so_tien
+    VARCHAR2_20 trang_thai
+    VARCHAR2_100 ma_tham_chieu_cong
+    TSTZ ngay_giao_dich
+    TSTZ ngay_tao
+  }
+  HOAN_TIEN {
+    NUMBER_19 hoan_tien_id PK
+    NUMBER_19 giao_dich_id FK
+    NUMBER_15_2 so_tien
+    VARCHAR2_500 ly_do
+    VARCHAR2_20 trang_thai
+    NUMBER_19 nguoi_de_nghi_id FK
+    NUMBER_19 nguoi_duyet_id FK
+    TSTZ ngay_tao
+  }
+  HOA_DON {
+    NUMBER_19 hoa_don_id PK
+    NUMBER_12 so_hoa_don
+    NUMBER_19 dat_phong_id FK
+    BOOLEAN la_dieu_chinh
+    NUMBER_19 hoa_don_goc_id FK
+    NUMBER_15_2 tong_tien
+    TSTZ ngay_lap
+    NUMBER_19 nguoi_lap_id FK
+    TSTZ ngay_tao
+  }
+  BO_DEM_HOA_DON {
+    VARCHAR2_20 loai PK
+    NUMBER_12 gia_tri_cuoi
+  }
+  CHI_TIET_HOA_DON {
+    NUMBER_19 chi_tiet_id PK
+    NUMBER_19 hoa_don_id FK
+    VARCHAR2_20 loai_dong
+    VARCHAR2_500 mo_ta
+    NUMBER_15_2 so_tien
+    NUMBER_5_4 thue_suat
+    TSTZ ngay_tao
+  }
+  NHAT_KY_KIEM_TOAN {
+    NUMBER_19 nhat_ky_id PK
+    VARCHAR2_50 bang
+    VARCHAR2_100 khoa_dong
+    VARCHAR2_30 hanh_dong
+    CLOB gia_tri_cu
+    CLOB gia_tri_moi
+    VARCHAR2_500 ly_do
+    NUMBER_19 nguoi_thuc_hien_id FK
+    VARCHAR2_20 vai_tro
+    VARCHAR2_20 kenh
+    VARCHAR2_45 dia_chi_ip
+    TSTZ thoi_diem
+  }
+  TY_GIA {
+    VARCHAR2_3 ngoai_te PK
+    DATE ngay_cap_nhat PK
+    NUMBER_15_4 ty_gia_vnd
+  }
+  CAU_HINH_HE_THONG {
+    VARCHAR2_50 ma_tham_so PK
+    DATE hieu_luc_tu PK
+    DATE hieu_luc_den
+    NUMBER_15_4 gia_tri_so
+    VARCHAR2_200 gia_tri_chu
+    VARCHAR2_500 mo_ta
+    TSTZ ngay_tao
+  }
+  NOI_DUNG_DICH {
+    VARCHAR2_100 ma_noi_dung PK
+    VARCHAR2_10 ngon_ngu PK
+    CLOB noi_dung
+    TSTZ ngay_tao
+  }
+  HANG_DOI_EMAIL {
+    NUMBER_19 email_id PK
+    NUMBER_19 dat_phong_id FK
+    VARCHAR2_30 loai_email
+    VARCHAR2_10 ngon_ngu FK
+    VARCHAR2_20 trang_thai
+    NUMBER_3 so_lan_thu
+    TSTZ lan_gui_cuoi
+    VARCHAR2_1000 loi
+    TSTZ ngay_tao
+  }
+```
