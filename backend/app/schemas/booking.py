@@ -278,3 +278,34 @@ class BookingExtendResponse(BaseModel):
     paid_amount: float
     remaining_amount: float
     message: str
+
+
+# ---------------------------------------------------------------------------
+# F10 – Change room on incident
+# ---------------------------------------------------------------------------
+
+class ChangeRoomRequest(BaseModel):
+    """Request body for POST /bookings/{id}/change-room (F10, FR-18, BR-35, BR-36)."""
+    model_config = ConfigDict(populate_by_name=True)
+
+    new_room_id: int = Field(..., alias="newRoomId", description="ID of the new room to move the guest into")
+    reason: str = Field(..., min_length=3, max_length=500, alias="reason",
+                        description="Mandatory incident reason recorded in audit log")
+
+
+class ChangeRoomResponse(BaseModel):
+    """Response for a successful room change on incident."""
+    model_config = ConfigDict(populate_by_name=True)
+
+    booking_id: int
+    booking_code: str
+    old_room_id: int = Field(..., alias="oldRoomId")
+    new_room_id: int = Field(..., alias="newRoomId")
+    new_room_number: str = Field(..., alias="newRoomNumber")
+    new_room_floor: int = Field(..., alias="newRoomFloor")
+    total_amount: float = Field(..., alias="totalAmount",
+                                description="Booking total amount – unchanged per BR-36")
+    suggested_rooms: List[SuggestedRoom] = Field(
+        default_factory=list, alias="suggestedRooms",
+        description="Rooms still available in same type, for pre-selection in UI"
+    )

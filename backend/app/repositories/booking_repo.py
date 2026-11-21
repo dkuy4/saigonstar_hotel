@@ -953,3 +953,186 @@ class BookingRepository:
                 "remaining_amount": max(0.0, tot - paid),
                 "message": f"Gia hạn thêm {units} {unit_label} thành công"
             }
+
+    @staticmethod
+    def get_suggested_rooms_for_change(
+        conn: oracledb.Connection,
+        booking_id: int
+    ) -> List[Dict[str, Any]]:
+        """
+        Returns available rooms for a CHECKED_IN booking using GOI_Y_PHONG.
+        Uses current segment's room type and time window (now → den_luc).
+        Called before the change to populate the dialog, and on ROOM_CONFLICT error.
+        """
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT d.phong_id, p.loai_phong_id, dp.den_luc,
+                           pkg_gia.bay_gio AS bay_gio
+                      FROM dat_phong dp
+                      JOIN (SELECT dat_phong_id, phong_id
+                              FROM dat_phong_doan
+                             WHERE dat_phong_id = :id
+                             ORDER BY doan_id DESC
+                             FETCH FIRST 1 ROW ONLY) d ON d.dat_phong_id = dp.dat_phong_id
+                      JOIN phong p ON p.phong_id = d.phong_id
+                     WHERE dp.dat_phong_id = :id
+                """, {"id": booking_id})
+                rows = fetch_cursor_as_dicts(cur)
+                if not rows:
+                    return []
+                r = rows[0]
+                type_id = int(r["loai_phong_id"])
+                tu = r["bay_gio"]
+                den = r["den_luc"]
+
+                res_cur = cur.callfunc(
+                    "PKG_DAT_PHONG.GOI_Y_PHONG",
+                    oracledb.CURSOR,
+                    [type_id, tu, den]
+                )
+                suggestion_rows = fetch_cursor_as_dicts(res_cur)
+                res_cur.close()
+                return [
+                    {
+                        "room_id": int(s["phong_id"]),
+                        "room_number": str(s["ma_phong"]),
+                        "floor": int(s["so_tang"])
+                    }
+                    for s in suggestion_rows
+                ]
+        except Exception as exc:
+            logger.warning("Failed to fetch suggested rooms for change-room: %s", exc)
+            return []
+
+    @staticmethod
+    def change_room(
+        conn: oracledb.Connection,
+        booking_id: int,
+        new_room_id: int,
+        reason: str
+    ) -> Dict[str, Any]:
+        """
+        Changes room for a CHECKED_IN booking due to an incident via
+        PKG_DAT_PHONG.DOI_PHONG_SU_CO(p_dat_phong_id, p_phong_moi_id, p_ly_do).
+
+        Rules enforced by Oracle (BR-35, BR-36, AC-13):
+        - Booking must be CHECKED_IN.
+        - reason must not be empty (Oracle raises VALIDATION_ERROR|LY_DO).
+        - Hourly bookings may only move to Standard rooms (HOURLY_NOT_ALLOWED).
+        - New room must be TRONG (ROOM_NOT_READY otherwise).
+        - Old room → BAO_TRI; new room → DANG_O; booking total unchanged.
+        - Reason is passed into session context via pkg_ngu_canh.dat_ly_do before
+          the call, so audit triggers capture it in the log.
+
+        Does NOT commit – the get_conn dependency handles commit/rollback.
+        """
+        with conn.cursor() as cur:
+            # Fetch current segment info for response building and suggestions on error
+            cur.execute("""
+                SELECT dp.ma_tra_cuu, dp.tong_tien, dp.loai_dat,
+                       d.phong_id AS old_room_id,
+                       p.loai_phong_id, dp.den_luc
+                  FROM dat_phong dp
+                  JOIN (SELECT dat_phong_id, phong_id
+                          FROM dat_phong_doan
+                         WHERE dat_phong_id = :id
+                         ORDER BY doan_id DESC
+                         FETCH FIRST 1 ROW ONLY) d ON d.dat_phong_id = dp.dat_phong_id
+                  JOIN phong p ON p.phong_id = d.phong_id
+                 WHERE dp.dat_phong_id = :id
+            """, {"id": booking_id})
+            meta_rows = fetch_cursor_as_dicts(cur)
+            if not meta_rows:
+                raise BusinessException(code="BOOKING_NOT_FOUND",
+                                        detail=f"Booking {booking_id} not found")
+            meta = meta_rows[0]
+            old_room_id = int(meta["old_room_id"])
+            type_id = int(meta["loai_phong_id"])
+            den_luc = meta["den_luc"]
+
+            try:
+                cur.callproc(
+                    "PKG_DAT_PHONG.DOI_PHONG_SU_CO",
+                    [booking_id, new_room_id, reason]
+                )
+            except oracledb.DatabaseError as exc:
+                biz_exc = parse_oracle_error(exc)
+                if biz_exc.code in ("ROOM_CONFLICT", "ROOM_NOT_READY", "ROOM_BUSY",
+                                    "HOURLY_NOT_ALLOWED", "ROOM_STATE_INVALID"):
+                    # Attach available rooms so the UI can offer alternatives
+                    try:
+                        with conn.cursor() as sug_cur:
+                            now_rows = fetch_cursor_as_dicts(
+                                sug_cur.execute(
+                                    "SELECT pkg_gia.bay_gio AS bay_gio FROM dual"
+                                ) or sug_cur
+                            )
+                            tu = now_rows[0]["bay_gio"] if now_rows else None
+                        res_cur = cur.callfunc(
+                            "PKG_DAT_PHONG.GOI_Y_PHONG",
+                            oracledb.CURSOR,
+                            [type_id, tu, den_luc]
+                        )
+                        sug_rows = fetch_cursor_as_dicts(res_cur)
+                        res_cur.close()
+                        biz_exc.data = {
+                            "suggested_rooms": [
+                                {
+                                    "room_id": int(s["phong_id"]),
+                                    "room_number": str(s["ma_phong"]),
+                                    "floor": int(s["so_tang"])
+                                }
+                                for s in sug_rows
+                            ]
+                        }
+                    except Exception as sug_err:
+                        logger.warning("Could not fetch suggestions after change-room error: %s", sug_err)
+                raise biz_exc
+
+            # Fetch new room details for response
+            cur.execute("""
+                SELECT ma_phong, so_tang
+                  FROM phong
+                 WHERE phong_id = :id
+            """, {"id": new_room_id})
+            new_room_row = cur.fetchone()
+            new_room_number = new_room_row[0] if new_room_row else str(new_room_id)
+            new_room_floor = int(new_room_row[1]) if new_room_row else 0
+
+            # Fetch suggestions for the UI (nice-to-have in success response)
+            try:
+                now_cur = conn.cursor()
+                now_cur.execute("SELECT pkg_gia.bay_gio AS bay_gio FROM dual")
+                now_rows = fetch_cursor_as_dicts(now_cur)
+                now_cur.close()
+                tu = now_rows[0]["bay_gio"] if now_rows else None
+                res_cur = cur.callfunc(
+                    "PKG_DAT_PHONG.GOI_Y_PHONG",
+                    oracledb.CURSOR,
+                    [type_id, tu, den_luc]
+                )
+                sug_rows = fetch_cursor_as_dicts(res_cur)
+                res_cur.close()
+                suggestions = [
+                    {
+                        "room_id": int(s["phong_id"]),
+                        "room_number": str(s["ma_phong"]),
+                        "floor": int(s["so_tang"])
+                    }
+                    for s in sug_rows
+                ]
+            except Exception as sug_err:
+                logger.warning("Could not fetch suggestions after successful change-room: %s", sug_err)
+                suggestions = []
+
+            return {
+                "booking_id": booking_id,
+                "booking_code": str(meta["ma_tra_cuu"]),
+                "old_room_id": old_room_id,
+                "new_room_id": new_room_id,
+                "new_room_number": new_room_number,
+                "new_room_floor": new_room_floor,
+                "total_amount": float(meta["tong_tien"] or 0),
+                "suggested_rooms": suggestions
+            }

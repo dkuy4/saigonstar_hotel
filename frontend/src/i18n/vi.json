@@ -80,6 +80,7 @@
     "REFUND_EXCEEDS_PAID": "Số tiền hoàn vượt quá số tiền khách đã thanh toán",
     "REFUND_STATE_INVALID": "Trạng thái hoàn tiền không hợp lệ",
     "ROOM_STATE_INVALID": "Trạng thái phòng không hợp lệ cho thao tác này",
+    "CHANGE_ROOM_NOT_ALLOWED": "Không thể đổi phòng cho đơn đặt phòng này",
     "MAINTENANCE_HAS_BOOKINGS": "Phòng vẫn còn đơn đặt trong tương lai, cần xử lý trước",
     "PRICE_OVERLAP": "Khoảng ngày hiệu lực của bảng giá bị chồng chéo",
     "PRICE_MISSING": "Chưa cấu hình bảng giá cho hạng phòng này",

@@ -80,6 +80,7 @@
     "REFUND_EXCEEDS_PAID": "Refund amount exceeds total paid amount",
     "REFUND_STATE_INVALID": "Invalid refund state",
     "ROOM_STATE_INVALID": "Invalid room state",
+    "CHANGE_ROOM_NOT_ALLOWED": "Cannot change room for this booking",
     "MAINTENANCE_HAS_BOOKINGS": "Room has future bookings that must be addressed first",
     "PRICE_OVERLAP": "Price dates overlap",
     "PRICE_MISSING": "Missing room rate configuration",
