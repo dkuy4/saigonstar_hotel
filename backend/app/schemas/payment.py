@@ -32,3 +32,23 @@ class PaymentCallbackResponse(BaseModel):
     result: str # XAC_NHAN | XAC_NHAN_MUON | HOAN_TIEN | THAT_BAI | DA_XU_LY
     reference_code: str = Field(..., alias="referenceCode")
     message: str
+
+# --- Desk Payment Schemas (F12, FR-34, BR-45) ---
+
+class DeskPaymentRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    method: str = Field(..., description="Phương thức: TIEN_MAT, CHUYEN_KHOAN, THE")
+    amount: float = Field(..., gt=0, description="Số tiền thanh toán")
+    notes: Optional[str] = Field(None, description="Ghi chú thanh toán")
+
+class DeskPaymentResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    success: bool = True
+    transaction_id: int = Field(..., alias="transactionId")
+    booking_id: int = Field(..., alias="bookingId")
+    method: str
+    amount: float
+    status: str
+    created_at: datetime = Field(..., alias="createdAt")

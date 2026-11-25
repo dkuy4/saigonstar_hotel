@@ -7,14 +7,12 @@ import BookingDetailView from '../views/BookingDetailView.vue';
 import MockPayView from '../views/MockPayView.vue';
 import PaymentResultView from '../views/PaymentResultView.vue';
 import NotFoundView from '../views/NotFoundView.vue';
-import LoginView from '../views/staff/LoginView.vue';
-import RoomBoardView from '../views/staff/RoomBoardView.vue';
-import HousekeepingView from '../views/staff/HousekeepingView.vue';
-import BookingListView from '../views/staff/BookingListView.vue';
-import CounterBookingCreateView from '../views/staff/CounterBookingCreateView.vue';
-import StaffBookingDetailView from '../views/staff/StaffBookingDetailView.vue';
-import ReportsView from '../views/staff/ReportsView.vue';
-import { useAuthStore } from '../stores/auth';
+
+// Guest Account Views
+import GuestLoginView from '../views/guest/GuestLoginView.vue';
+import GuestRegisterView from '../views/guest/GuestRegisterView.vue';
+import GuestForgotPasswordView from '../views/guest/GuestForgotPasswordView.vue';
+import GuestBookingsView from '../views/guest/GuestBookingsView.vue';
 
 const routes = [
   {
@@ -57,46 +55,34 @@ const routes = [
     name: 'booking-detail',
     component: BookingDetailView
   },
+  // Guest Account Routes
   {
-    path: '/nv/dang-nhap',
-    name: 'login',
-    component: LoginView
+    path: '/dang-nhap',
+    name: 'guest-login',
+    component: GuestLoginView
   },
   {
-    path: '/nv/so-do-phong',
-    name: 'room-board',
-    component: RoomBoardView,
-    meta: { requiresAuth: true, roles: ['LE_TAN', 'QUAN_LY'] }
+    path: '/dang-ky',
+    name: 'guest-register',
+    component: GuestRegisterView
   },
   {
-    path: '/nv/don',
-    name: 'booking-list',
-    component: BookingListView,
-    meta: { requiresAuth: true, roles: ['LE_TAN', 'QUAN_LY'] }
+    path: '/quen-mat-khau',
+    name: 'guest-forgot-password',
+    component: GuestForgotPasswordView
   },
   {
-    path: '/nv/don/moi',
-    name: 'counter-booking-create',
-    component: CounterBookingCreateView,
-    meta: { requiresAuth: true, roles: ['LE_TAN', 'QUAN_LY'] }
+    path: '/chuyen-di-cua-toi',
+    name: 'guest-bookings',
+    component: GuestBookingsView,
+    meta: { requiresGuestAuth: true }
   },
   {
-    path: '/nv/don/:id',
-    name: 'staff-booking-detail',
-    component: StaffBookingDetailView,
-    meta: { requiresAuth: true, roles: ['LE_TAN', 'QUAN_LY'] }
-  },
-  {
-    path: '/nv/don-phong',
-    name: 'housekeeping',
-    component: HousekeepingView,
-    meta: { requiresAuth: true, roles: ['BUONG_PHONG', 'QUAN_LY'] }
-  },
-  {
-    path: '/nv/bao-cao',
-    name: 'reports',
-    component: ReportsView,
-    meta: { requiresAuth: true, roles: ['QUAN_LY'] }
+    // Chuyển hướng người dùng/nhân viên sang cổng Admin độc lập port 5174
+    path: '/nv/:pathMatch(.*)*',
+    beforeEnter() {
+      window.location.href = 'http://127.0.0.1:5174/';
+    }
   },
   {
     path: '/404',
@@ -114,34 +100,12 @@ const router = createRouter({
   routes
 });
 
-// Navigation guard for role-based routes
+// Navigation guard for guest protected routes
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
-  
-  if (to.meta.requiresAuth) {
-    if (!authStore.isAuthenticated) {
-      return next({ path: '/nv/dang-nhap', query: { redirect: to.fullPath } });
-    }
-    
-    if (to.meta.roles && !to.meta.roles.includes(authStore.role)) {
-      // Forbidden: redirect to their default home or 404
-      if (authStore.role === 'BUONG_PHONG') {
-        return next({ path: '/nv/don-phong' });
-      } else {
-        return next({ path: '/nv/so-do-phong' });
-      }
-    }
+  const guestToken = localStorage.getItem('guest_token');
+  if (to.meta.requiresGuestAuth && !guestToken) {
+    return next({ path: '/dang-nhap', query: { redirect: to.fullPath } });
   }
-
-  // If authenticated user visits login, redirect to dashboard
-  if (to.path === '/nv/dang-nhap' && authStore.isAuthenticated) {
-    if (authStore.role === 'BUONG_PHONG') {
-      return next({ path: '/nv/don-phong' });
-    } else {
-      return next({ path: '/nv/so-do-phong' });
-    }
-  }
-
   next();
 });
 

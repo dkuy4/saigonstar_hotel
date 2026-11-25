@@ -19,8 +19,8 @@
     </div>
 
     <!-- Error Alert -->
-    <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center space-x-2">
-      <span class="text-lg">⚠️</span>
+    <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center space-x-2.5">
+      <AlertCircle class="w-5 h-5 text-rose-600 flex-shrink-0" />
       <div class="flex-1">
         <div class="font-bold">Không thể tạo đơn:</div>
         <div>{{ errorMessage }}</div>
@@ -265,6 +265,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { AlertCircle } from 'lucide-vue-next';
 import apiClient from '../../api/client';
 
 const route = useRoute();

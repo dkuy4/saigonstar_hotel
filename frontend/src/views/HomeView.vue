@@ -14,8 +14,9 @@
 
       <!-- Hero Content -->
       <div class="relative z-10 px-6 py-12 md:py-16 max-w-4xl mx-auto text-center space-y-4">
-        <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/30 backdrop-blur-md">
-          ★ KHÁCH SẠN NGHỈ DƯỠNG TIÊU CHUẨN QUỐC TẾ
+        <span class="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/30 backdrop-blur-md">
+          <Star class="w-3.5 h-3.5 fill-sky-300" />
+          <span>{{ t('home.badge') }}</span>
         </span>
         <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
           {{ t('search.title') }}
@@ -35,12 +36,36 @@
     <div class="space-y-6">
       <div class="flex items-end justify-between">
         <div>
-          <h3 class="text-2xl font-bold text-slate-900 tracking-tight">Hạng phòng & Bảng giá niêm yết</h3>
-          <p class="text-xs text-slate-500 mt-1">Giá công khai đã gồm phí dịch vụ, chưa gồm VAT 8% (D-26, BR-57)</p>
+          <h3 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('home.showcaseTitle') }}</h3>
+          <p class="text-xs text-slate-500 mt-1">{{ t('home.showcaseSubtitle') }}</p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Loading Skeletons -->
+      <div v-if="loadingRoomTypes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div v-for="i in 4" :key="i" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between animate-pulse">
+          <div>
+            <div class="h-44 bg-slate-200"></div>
+            <div class="p-5 space-y-3">
+              <div class="h-5 bg-slate-200 rounded w-3/4"></div>
+              <div class="space-y-1.5">
+                <div class="h-3 bg-slate-200 rounded w-full"></div>
+                <div class="h-3 bg-slate-200 rounded w-5/6"></div>
+              </div>
+              <div class="h-3.5 bg-slate-200 rounded w-1/3 pt-1"></div>
+            </div>
+          </div>
+          <div class="p-5 pt-0 border-t border-slate-100 mt-3 flex items-center justify-between">
+            <div class="space-y-1">
+              <div class="h-2.5 bg-slate-200 rounded w-12"></div>
+              <div class="h-4 bg-slate-200 rounded w-20"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loaded Room Cards -->
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div
           v-for="rt in roomTypes"
           :key="rt.id"
@@ -52,66 +77,40 @@
               <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-sm text-white px-2 py-0.5 rounded text-[11px] font-semibold">
                 {{ rt.code }}
               </div>
-              <div v-if="rt.hourly_allowed" class="absolute bottom-3 right-3 bg-purple-600 text-white px-2 py-0.5 rounded text-[11px] font-semibold shadow">
-                ⏱️ Có thuê giờ
+              <div v-if="rt.hourly_allowed" class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-sm text-white px-2 py-0.5 rounded text-[11px] font-semibold shadow flex items-center space-x-1">
+                <Clock class="w-3 h-3 text-purple-300" />
+                <span>{{ t('home.hourlyAllowed') }}</span>
               </div>
             </div>
 
             <div class="p-5 space-y-2.5">
               <h4 class="font-bold text-base text-slate-900">{{ rt.name }}</h4>
-              <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+              <p class="text-xs text-slate-500 line-clamp-3 leading-relaxed">
                 {{ rt.description }}
               </p>
-              <div class="text-[11px] text-slate-600 font-medium pt-1">
-                👥 Sức chứa: {{ rt.capacity }} khách
+              <div class="text-[11px] text-slate-600 font-medium pt-1 flex items-center space-x-1.5">
+                <Users class="w-3.5 h-3.5 text-slate-400" />
+                <span>{{ t('home.capacity', { count: rt.capacity }) }}</span>
               </div>
             </div>
           </div>
 
           <div class="p-5 pt-0 border-t border-slate-100 mt-3 flex items-center justify-between">
             <div>
-              <span class="text-[10px] text-slate-400 uppercase font-semibold block">Giá theo ngày</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold block">{{ t('home.dailyPrice') }}</span>
               <span class="text-base font-bold text-sky-600">
-                <MoneyText :value="rt.daily_price" currency="VND" />
+                <MoneyText :amount="rt.daily_price || defaultDailyPrices[rt.code]" currency="VND" />
               </span>
-              <span class="text-[10px] text-slate-400"> / đêm</span>
+              <span class="text-[10px] text-slate-400">{{ t('home.perNight') }}</span>
             </div>
-            <div v-if="rt.hourly_price" class="text-right">
-              <span class="text-[10px] text-slate-400 uppercase font-semibold block">Giá theo giờ</span>
+            <div v-if="rt.hourly_price || rt.hourly_allowed" class="text-right">
+              <span class="text-[10px] text-slate-400 uppercase font-semibold block">{{ t('home.hourlyPrice') }}</span>
               <span class="text-sm font-semibold text-purple-700">
-                <MoneyText :value="rt.hourly_price" currency="VND" />
+                <MoneyText :amount="rt.hourly_price || defaultHourlyPrices[rt.code] || 80000" currency="VND" />
               </span>
-              <span class="text-[10px] text-slate-400"> / giờ</span>
+              <span class="text-[10px] text-slate-400">{{ t('home.perHour') }}</span>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Architecture & Database Health Status -->
-    <div class="bg-slate-100/70 border border-slate-200/80 rounded-2xl p-6">
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">
-            ⚡
-          </div>
-          <div>
-            <h4 class="text-sm font-bold text-slate-900">Oracle Database 23ai Engine</h4>
-            <p class="text-xs text-slate-500">Khóa bi quan tại CSDL • Kiểm soát xung đột đồng thời 100%</p>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-4 text-xs">
-          <span class="flex items-center text-emerald-700 font-semibold">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
-            PDB FREEPDB1 (Connected)
-          </span>
-          <span class="text-slate-400">|</span>
-          <span class="text-slate-600">21 Tables</span>
-          <span class="text-slate-400">|</span>
-          <span class="text-slate-600">11 Packages</span>
-          <span class="text-slate-400">|</span>
-          <span class="text-slate-600">37 + 104 Tests Pass</span>
         </div>
       </div>
     </div>
@@ -121,13 +120,31 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { Star, Clock, Users, Zap } from 'lucide-vue-next';
+import { useAuthStore } from '../stores/auth';
 import apiClient from '../api/client';
 import SearchBox from '../components/SearchBox.vue';
 import MoneyText from '../components/MoneyText.vue';
 
 const { t, locale } = useI18n();
+const authStore = useAuthStore();
 
 const roomTypes = ref([]);
+const loadingRoomTypes = ref(true);
+
+const defaultDailyPrices = {
+  STANDARD: 550000,
+  SUPERIOR: 950000,
+  DELUXE: 1450000,
+  SUITE: 1950000
+};
+
+const defaultHourlyPrices = {
+  STANDARD: 80000,
+  SUPERIOR: 0,
+  DELUXE: 0,
+  SUITE: 0
+};
 
 const getRoomImage = (code) => {
   const images = {
@@ -140,6 +157,7 @@ const getRoomImage = (code) => {
 };
 
 const loadRoomTypes = async () => {
+  loadingRoomTypes.value = true;
   try {
     const res = await apiClient.get('/room-types', {
       params: { lang: locale.value }
@@ -147,6 +165,8 @@ const loadRoomTypes = async () => {
     roomTypes.value = res || [];
   } catch (err) {
     console.error('Failed to load room types:', err);
+  } finally {
+    loadingRoomTypes.value = false;
   }
 };
 

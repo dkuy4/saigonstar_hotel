@@ -8,7 +8,7 @@
         class="flex items-center space-x-2 px-5 py-2.5 rounded-xl font-medium text-sm transition"
         :class="searchType === 'NGAY' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'"
       >
-        <span>📅</span>
+        <Calendar class="w-4 h-4" />
         <span>{{ t('search.daily') }}</span>
       </button>
 
@@ -18,7 +18,7 @@
         class="flex items-center space-x-2 px-5 py-2.5 rounded-xl font-medium text-sm transition"
         :class="searchType === 'GIO' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'"
       >
-        <span>⏱️</span>
+        <Clock class="w-4 h-4" />
         <span>{{ t('search.hourly') }}</span>
       </button>
     </div>
@@ -37,7 +37,7 @@
             type="date"
             :min="todayStr"
             required
-            class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+            class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
           />
         </div>
 
@@ -51,7 +51,7 @@
             type="date"
             :min="dailyCheckinDate || todayStr"
             required
-            class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+            class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
           />
         </div>
 
@@ -62,12 +62,12 @@
           </label>
           <select
             v-model="guests"
-            class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none bg-white"
+            class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
           >
-            <option :value="1">1 khách</option>
-            <option :value="2">2 khách</option>
-            <option :value="3">3 khách</option>
-            <option :value="4">4 khách</option>
+            <option :value="1">{{ t('search.guestsCount', { count: 1 }) }}</option>
+            <option :value="2">{{ t('search.guestsCount', { count: 2 }) }}</option>
+            <option :value="3">{{ t('search.guestsCount', { count: 3 }) }}</option>
+            <option :value="4">{{ t('search.guestsCount', { count: 4 }) }}</option>
           </select>
         </div>
       </div>
@@ -78,26 +78,26 @@
           <!-- Hourly Date -->
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">
-              Ngày thuê
+              {{ t('search.hourlyDate') }}
             </label>
             <input
               v-model="hourlyDate"
               type="date"
               :min="todayStr"
               required
-              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
             />
           </div>
 
           <!-- Hourly Start Time (15-min interval) -->
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">
-              {{ t('search.checkinTime') }} (Bước 15p)
+              {{ t('search.checkinTime') }} ({{ t('search.step15m') }})
             </label>
             <select
               v-model="hourlyTime"
               required
-              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none bg-white"
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
             >
               <option v-for="tSlot in timeSlots" :key="tSlot" :value="tSlot">
                 {{ tSlot }}
@@ -112,17 +112,17 @@
             </label>
             <select
               v-model="hourlyDuration"
-              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none bg-white"
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
             >
-              <option :value="1">1 giờ</option>
-              <option :value="2">2 giờ</option>
-              <option :value="3">3 giờ (240.000 đ)</option>
-              <option :value="4">4 giờ (320.000 đ)</option>
-              <option :value="5">5 giờ (400.000 đ)</option>
-              <option :value="6">6 giờ (Giá trần ngày: 550.000 đ)</option>
-              <option :value="8">8 giờ (550.000 đ)</option>
-              <option :value="12">12 giờ (550.000 đ)</option>
-              <option :value="24">24 giờ (550.000 đ)</option>
+              <option :value="1">{{ t('search.hourCount', { count: 1 }) }}</option>
+              <option :value="2">{{ t('search.hourCount', { count: 2 }) }}</option>
+              <option :value="3">{{ t('search.hourCount', { count: 3 }) }} (240.000 ₫)</option>
+              <option :value="4">{{ t('search.hourCount', { count: 4 }) }} (320.000 ₫)</option>
+              <option :value="5">{{ t('search.hourCount', { count: 5 }) }} (400.000 ₫)</option>
+              <option :value="6">{{ t('search.hourCount', { count: 6 }) }} ({{ t('search.dailyCap', { price: '550.000 ₫' }) }})</option>
+              <option :value="8">{{ t('search.hourCount', { count: 8 }) }} (550.000 ₫)</option>
+              <option :value="12">{{ t('search.hourCount', { count: 12 }) }} (550.000 ₫)</option>
+              <option :value="24">{{ t('search.hourCount', { count: 24 }) }} (550.000 ₫)</option>
             </select>
           </div>
 
@@ -133,17 +133,17 @@
             </label>
             <select
               v-model="guests"
-              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none bg-white"
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
             >
-              <option :value="1">1 khách</option>
-              <option :value="2">2 khách (Tối đa)</option>
+              <option :value="1">{{ t('search.guestsCount', { count: 1 }) }}</option>
+              <option :value="2">{{ t('search.guestsCount', { count: 2 }) }} ({{ t('search.maxGuests') }})</option>
             </select>
           </div>
         </div>
 
-        <div class="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg flex items-center space-x-2">
-          <span>ℹ️</span>
-          <span>Thuê theo giờ chỉ áp dụng cho hạng <strong>Standard</strong> (nhận 24/24, từ 1–24 giờ; từ 6 giờ trở lên tính trần 1 giá ngày).</span>
+        <div class="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3.5 py-2.5 rounded-xl flex items-center space-x-2.5">
+          <Info class="w-4 h-4 text-amber-600 flex-shrink-0" />
+          <span>{{ t('search.hourlyNote', { rank: 'Standard' }) }}</span>
         </div>
       </div>
 
@@ -153,7 +153,7 @@
           type="submit"
           class="w-full md:w-auto px-8 py-3 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2"
         >
-          <span>🔍</span>
+          <Search class="w-4 h-4" />
           <span>{{ t('search.searchButton') }}</span>
         </button>
       </div>
@@ -165,6 +165,7 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { Calendar, Clock, Search, Info } from 'lucide-vue-next';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -192,13 +193,20 @@ const nextTwoDays = new Date(now);
 nextTwoDays.setDate(now.getDate() + 3);
 const nextTwoDaysStr = `${nextTwoDays.getFullYear()}-${pad(nextTwoDays.getMonth() + 1)}-${pad(nextTwoDays.getDate())}`;
 
-// Daily fields
-const dailyCheckinDate = ref(tomorrowStr);
-const dailyCheckoutDate = ref(nextTwoDaysStr);
+// Extract YYYY-MM-DD from ISO or date string
+const parseDatePart = (str, fallback) => {
+  if (!str) return fallback;
+  const match = str.match(/^\d{4}-\d{2}-\d{2}/);
+  return match ? match[0] : fallback;
+};
+
+// Daily fields (initialized with props if provided)
+const dailyCheckinDate = ref(parseDatePart(props.initialCheckin, tomorrowStr));
+const dailyCheckoutDate = ref(parseDatePart(props.initialCheckout, nextTwoDaysStr));
 
 // Hourly fields
-const hourlyDate = ref(tomorrowStr);
-const hourlyTime = ref('10:00');
+const hourlyDate = ref(parseDatePart(props.initialCheckin, tomorrowStr));
+const hourlyTime = ref(props.initialCheckin && props.initialCheckin.includes('T') ? props.initialCheckin.split('T')[1].substring(0, 5) : '10:00');
 const hourlyDuration = ref(3);
 
 // Generate 15-minute time slots

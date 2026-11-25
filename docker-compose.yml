@@ -26,9 +26,22 @@ services:
       - ORA_DSN=oracle:1521/FREEPDB1
       - ORA_SCHEMA=HOTEL_OWNER
       - JWT_SECRET=hotel_jwt_secret_key_change_in_production_2026_super_secure
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1025
       - BACKEND_CORS_ORIGINS=["*"]
     depends_on:
       - oracle
+      - mailpit
+    networks:
+      - hotel-net
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: hotel_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
     networks:
       - hotel-net
 

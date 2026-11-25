@@ -43,6 +43,7 @@ CREATE TABLE nguoi_dung (
   trang_thai     VARCHAR2(20) DEFAULT 'HOAT_DONG' NOT NULL,
   so_lan_sai     NUMBER(3)    DEFAULT 0 NOT NULL,
   khoa_den       TIMESTAMP(0) WITH TIME ZONE,
+  phai_doi_mat_khau BOOLEAN DEFAULT FALSE NOT NULL,
   ngay_tao       TIMESTAMP(0) WITH TIME ZONE DEFAULT SYSTIMESTAMP NOT NULL,
   CONSTRAINT pk_nguoi_dung PRIMARY KEY (nguoi_dung_id),
   CONSTRAINT uix_nguoi_dung_ten_dang_nhap UNIQUE (ten_dang_nhap),

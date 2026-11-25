@@ -8,7 +8,11 @@ import { computed } from 'vue';
 const props = defineProps({
   amount: {
     type: [Number, String],
-    default: 0
+    default: null
+  },
+  value: {
+    type: [Number, String],
+    default: null
   },
   currency: {
     type: String,
@@ -17,7 +21,8 @@ const props = defineProps({
 });
 
 const formattedMoney = computed(() => {
-  const num = Number(props.amount) || 0;
+  const raw = props.amount !== null && props.amount !== undefined ? props.amount : props.value;
+  const num = Number(raw) || 0;
   if (props.currency === 'VND') {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',

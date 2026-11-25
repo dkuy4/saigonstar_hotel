@@ -90,6 +90,14 @@ class BookingCancelResponse(BaseModel):
     refund_amount: float = Field(0.0, alias="refundAmount")
     message: str
 
+class BookingNoShowResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    status: str
+    booking_id: int = Field(..., alias="bookingId")
+    booking_code: str = Field(..., alias="bookingCode")
+    new_status: str = Field(..., alias="newStatus")
+    message: str
+
 class BookingRescheduleRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
     checkin: datetime = Field(..., alias="nhanLuc")
@@ -178,6 +186,26 @@ class InvoiceSummary(BaseModel):
     issued_at: datetime = Field(..., alias="issuedAt")
     created_by: Optional[str] = Field(None, alias="createdBy")
 
+class EmailLogItem(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    email_id: int = Field(..., alias="emailId")
+    email_type: str = Field(..., alias="emailType")
+    language: str
+    status: str
+    attempts: int
+    last_sent_at: Optional[datetime] = Field(None, alias="lastSentAt")
+    error: Optional[str] = None
+    created_at: datetime = Field(..., alias="createdAt")
+
+class BookingResendEmailResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    status: str
+    booking_id: int = Field(..., alias="bookingId")
+    booking_code: str = Field(..., alias="bookingCode")
+    message: str
+
 class AllowedActions(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
@@ -195,6 +223,7 @@ class BookingStaffDetailResponse(BaseModel):
     id: int
     booking_code: str
     status: str
+    room_type: Optional[str] = None
     booking_type: str
     channel: str
     checkin: datetime
@@ -215,6 +244,7 @@ class BookingStaffDetailResponse(BaseModel):
     transactions: List[PaymentTransaction] = []
     refunds: List[RefundRecord] = []
     invoice: Optional[InvoiceSummary] = None
+    emails: List[EmailLogItem] = []
     actions: AllowedActions
 
 class CheckInRequest(BaseModel):

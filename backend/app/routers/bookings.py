@@ -7,7 +7,7 @@ import oracledb
 from app.db import get_conn
 from app.context import set_db_context
 from app.errors import BusinessException
-from app.security import decode_access_token, create_booking_token, require_role, AuthUser
+from app.security import decode_access_token, create_booking_token, require_role, AuthUser, get_current_user_optional
 from app.schemas.booking import (
     BookingCreate,
     BookingOut,
@@ -16,6 +16,8 @@ from app.schemas.booking import (
     RefundPreviewResponse,
     BookingCancelRequest,
     BookingCancelResponse,
+    BookingNoShowResponse,
+    BookingResendEmailResponse,
     BookingRescheduleRequest,
     BookingRescheduleResponse,
     BookingListResponse,
@@ -27,7 +29,11 @@ from app.schemas.booking import (
     BookingExtendResponse
 )
 from app.repositories.booking_repo import BookingRepository
+from app.repositories.payment_repo import PaymentRepository
+from app.schemas.payment import DeskPaymentRequest, DeskPaymentResponse
 from app.services.storage import save_document_photo
+from app.config import settings
+from app.core.rate_limit import rate_limit_api
 
 logger = logging.getLogger(__name__)
 
@@ -69,21 +75,40 @@ def check_booking_authorization(
     "",
     response_model=BookingOut,
     status_code=status.HTTP_201_CREATED,
-    summary="Tạo đơn đặt phòng mới (FR-04, FR-05, FR-06, FR-13, AC-01, AC-02, AC-03)"
+    dependencies=[Depends(rate_limit_api)],
+    summary="Tạo đơn đặt phòng mới (FR-04, FR-05, FR-06, FR-13, AC-01, AC-02, AC-03, AC-18)"
 )
 def create_booking(
     payload: BookingCreate,
+    x_api_key: Optional[str] = Header(None, alias="X-API-Key", description="Khóa API tích hợp đối tác (kênh API)"),
     staff_user: Optional[dict] = Depends(get_optional_staff_user),
+    user_optional: Optional[AuthUser] = Depends(get_current_user_optional),
     conn: oracledb.Connection = Depends(get_conn)
 ):
-    if staff_user and staff_user.get("role") in ("LE_TAN", "QUAN_LY"):
+    if x_api_key is not None:
+        if x_api_key != settings.API_KEY_INTEGRATION:
+            raise BusinessException("UNAUTHORIZED", "Khóa API không hợp lệ")
+        channel = "API"
+        set_db_context(conn, nguoi_id=None, vai_tro="KHACH", kenh=channel)
+        room_id = None
+        if not payload.agree_terms:
+            raise BusinessException(
+                "VALIDATION_ERROR",
+                "Quý khách phải đồng ý với chính sách hủy phòng và quy định vắng mặt (no-show)"
+            )
+    elif staff_user and staff_user.get("role") in ("LE_TAN", "QUAN_LY"):
         channel = "QUAY"
         set_db_context(conn, nguoi_id=staff_user.get("user_id"), vai_tro=staff_user.get("role"), kenh=channel)
         room_id = payload.room_id
     else:
         channel = "WEB"
+        # Nguoi_thuc_hien_id trong nhat_ky_kiem_toan tham chieu den nguoi_dung(nguoi_dung_id).
+        # Khach hang la khach_hang, khong phai nguoi_dung noi bo, nen p_nguoi_id = None de tranh loi ORA-02291.
         set_db_context(conn, nguoi_id=None, vai_tro="KHACH", kenh=channel)
-        room_id = None
+        room_id = payload.room_id
+        if settings.CAPTCHA_ENABLED:
+            if not payload.captcha_token or payload.captcha_token != settings.CAPTCHA_TEST_SECRET:
+                raise BusinessException("VALIDATION_ERROR", "Mã xác thực CAPTCHA không hợp lệ")
         if not payload.agree_terms:
             raise BusinessException(
                 "VALIDATION_ERROR",
@@ -345,3 +370,56 @@ def extend_booking(
     set_db_context(conn, nguoi_id=user.user_id, vai_tro=user.role, kenh="QUAY")
     res = BookingRepository.extend_booking(conn=conn, booking_id=id, units=payload.units)
     return BookingExtendResponse(**res)
+
+@router.post(
+    "/{id}/payments",
+    response_model=DeskPaymentResponse,
+    summary="Thu tiền tại quầy cho đơn đặt phòng (F12, FR-34, BR-45)"
+)
+def record_desk_payment(
+    id: int,
+    payload: DeskPaymentRequest,
+    user: AuthUser = Depends(require_role("LE_TAN", "QUAN_LY")),
+    conn: oracledb.Connection = Depends(get_conn)
+):
+    set_db_context(conn, nguoi_id=user.user_id, vai_tro=user.role, kenh="QUAY")
+    res = PaymentRepository.record_desk_payment(
+        conn=conn,
+        booking_id=id,
+        method=payload.method,
+        amount=payload.amount,
+        notes=payload.notes
+    )
+    return DeskPaymentResponse(**res)
+
+
+@router.post(
+    "/{id}/no-show",
+    response_model=BookingNoShowResponse,
+    summary="Đóng đơn NO_SHOW thủ công (F13, FR-20, AC-11)"
+)
+def mark_booking_no_show(
+    id: int,
+    user: AuthUser = Depends(require_role("LE_TAN", "QUAN_LY")),
+    conn: oracledb.Connection = Depends(get_conn)
+):
+    set_db_context(conn, nguoi_id=user.user_id, vai_tro=user.role, kenh="QUAY")
+    res = BookingRepository.mark_no_show(conn=conn, booking_id=id)
+    return BookingNoShowResponse(**res)
+
+
+@router.post(
+    "/{id}/resend-email",
+    response_model=BookingResendEmailResponse,
+    summary="Gửi lại email xác nhận đơn đặt phòng (F14, FR-23)"
+)
+def resend_booking_email(
+    id: int,
+    user: AuthUser = Depends(require_role("LE_TAN", "QUAN_LY")),
+    conn: oracledb.Connection = Depends(get_conn)
+):
+    set_db_context(conn, nguoi_id=user.user_id, vai_tro=user.role, kenh="QUAY")
+    res = BookingRepository.resend_email(conn=conn, booking_id=id)
+    return BookingResendEmailResponse(**res)
+
+

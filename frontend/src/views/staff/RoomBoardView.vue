@@ -143,7 +143,7 @@
 
     <!-- Error Alert -->
     <div v-if="error" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center space-x-2">
-      <span>⚠️</span>
+      <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
       <span>{{ error }}</span>
     </div>
 
@@ -200,7 +200,7 @@
               <StatusBadge :status="selectedRoom.status" />
             </div>
             <div class="text-xs text-slate-500 mt-1">
-              Tầng {{ selectedRoom.floor }} • Hạng <strong class="text-sky-700">{{ selectedRoom.roomType }}</strong>
+              Tầng {{ selectedRoom.floor }} - Hạng <strong class="text-sky-700">{{ selectedRoom.roomType }}</strong>
             </div>
           </div>
           <button
@@ -254,6 +254,39 @@
           </router-link>
         </div>
 
+        <!-- Room under Maintenance: End Maintenance Action (F15) -->
+        <div v-else-if="selectedRoom.status === 'BAO_TRI'" class="bg-rose-50 rounded-xl p-4 border border-rose-100 space-y-3">
+          <div class="text-xs font-semibold text-rose-800 flex items-center gap-1.5">
+            <Wrench class="w-4 h-4 text-rose-600" />
+            <span>Phòng đang trong trạng thái bảo trì kỹ thuật</span>
+          </div>
+          <p v-if="selectedRoom.notes" class="text-xs text-slate-600 bg-white/80 p-2.5 rounded-lg border border-rose-200/60">
+            <strong class="text-rose-900">Lý do:</strong> {{ selectedRoom.notes }}
+          </p>
+          <button
+            type="button"
+            @click="handleEndMaintenance(selectedRoom)"
+            :disabled="maintenanceActionLoading"
+            class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center justify-center space-x-1.5 active:scale-95 disabled:opacity-50"
+          >
+            <RefreshCw v-if="maintenanceActionLoading" class="w-4 h-4 animate-spin" />
+            <Check v-else class="w-4 h-4 stroke-[3]" />
+            <span>Kết thúc bảo trì (Đưa về phòng trống)</span>
+          </button>
+        </div>
+
+        <!-- Maintenance Trigger for TRONG and DANG_DON rooms (F15, BR-40, BR-41) -->
+        <div v-if="['TRONG', 'DANG_DON'].includes(selectedRoom.status)" class="pt-2">
+          <button
+            type="button"
+            @click="openMaintenanceModal(selectedRoom)"
+            class="w-full py-2 bg-slate-50 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 transition flex items-center justify-center space-x-1.5"
+          >
+            <Wrench class="w-3.5 h-3.5 text-slate-500" />
+            <span>Đưa phòng vào bảo trì...</span>
+          </button>
+        </div>
+
         <!-- Next Booking Section -->
         <div v-if="selectedRoom.nextBooking" class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-2 text-xs">
           <div class="flex items-center justify-between">
@@ -276,11 +309,129 @@
         </button>
       </div>
     </div>
+
+    <!-- MODAL BẢO TRÌ PHÒNG (BR-40, BR-41) -->
+    <div
+      v-if="showMaintenanceModal"
+      class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-fadeIn">
+        <!-- Header -->
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center">
+              <Wrench class="w-4 h-4" />
+            </div>
+            <div>
+              <h2 class="text-sm font-bold text-slate-900">Đưa phòng {{ maintenanceRoom?.roomNumber }} vào bảo trì</h2>
+              <p class="text-[11px] text-slate-500">Chuyển trạng thái phòng sang BAO_TRI (BR-40, BR-41)</p>
+            </div>
+          </div>
+          <button @click="closeMaintenanceModal" class="text-slate-400 hover:text-slate-600">✕</button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-4 text-xs">
+          <!-- Error Alert -->
+          <div v-if="maintenanceError" class="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl flex items-center gap-2">
+            <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
+            <span>{{ maintenanceError }}</span>
+          </div>
+
+          <!-- Reason Input -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">
+              Lý do bảo trì <span class="text-rose-500">*</span>
+            </label>
+            <textarea
+              v-model="maintenanceReason"
+              rows="3"
+              placeholder="Nhập lý do chi tiết (VD: Hỏng điều hòa, sơn tường, sửa vòi sen...)"
+              class="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white text-xs outline-none focus:ring-2 focus:ring-rose-500 placeholder:text-slate-400"
+            ></textarea>
+          </div>
+
+          <!-- Loading Affected Bookings -->
+          <div v-if="loadingAffected" class="p-3 bg-slate-50 rounded-xl text-center text-slate-400 flex items-center justify-center gap-2">
+            <RefreshCw class="w-3.5 h-3.5 animate-spin text-slate-500" />
+            <span>Đang kiểm tra đơn tương lai bị ảnh hưởng...</span>
+          </div>
+
+          <!-- Affected Bookings Warning (BR-41) -->
+          <div v-else-if="affectedBookings.length > 0" class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl space-y-3">
+            <div class="flex items-center gap-2 text-amber-800 font-bold">
+              <AlertTriangle class="w-4 h-4 text-amber-600 flex-shrink-0" />
+              <span>Cảnh báo: Có {{ affectedBookings.length }} đơn đặt tương lai bị ảnh hưởng!</span>
+            </div>
+            <p class="text-slate-600 text-[11px]">
+              Phòng này đã có khách đặt trong tương lai. Bạn cần xử lý chuyển phòng cùng hạng cho khách (BR-41).
+            </p>
+            <div class="max-h-40 overflow-y-auto border border-amber-200/80 rounded-lg bg-white divide-y divide-slate-100">
+              <div v-for="b in affectedBookings" :key="b.bookingId" class="p-2.5 text-[11px] space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-bold text-slate-800">{{ b.bookingCode }}</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">{{ b.status }}</span>
+                </div>
+                <div class="text-slate-500 flex justify-between">
+                  <span>{{ formatDateTime(b.from) }} → {{ formatDateTime(b.to) }}</span>
+                  <span class="font-medium text-slate-700">{{ b.customerName }} ({{ b.customerPhone }})</span>
+                </div>
+              </div>
+            </div>
+
+            <label class="flex items-start gap-2 pt-1 cursor-pointer">
+              <input
+                type="checkbox"
+                v-model="confirmIgnoreAffected"
+                class="mt-0.5 rounded border-slate-300 text-rose-600 focus:ring-rose-500"
+              />
+              <span class="text-[11px] font-semibold text-slate-800">
+                Tôi xác nhận tiếp tục đưa phòng vào bảo trì (sẽ xử lý chuyển phòng cho khách sau).
+              </span>
+            </label>
+          </div>
+
+          <div v-else class="p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-800 flex items-center gap-2">
+            <CheckCircle2 class="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <span>Phòng không có đơn tương lai nào bị ảnh hưởng.</span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
+          <button
+            type="button"
+            @click="closeMaintenanceModal"
+            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition"
+          >
+            Hủy bỏ
+          </button>
+          <button
+            type="button"
+            @click="submitMaintenance"
+            :disabled="maintenanceSubmitting || !maintenanceReason.trim() || (affectedBookings.length > 0 && !confirmIgnoreAffected)"
+            class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-sm transition disabled:opacity-50 flex items-center gap-1.5"
+          >
+            <RefreshCw v-if="maintenanceSubmitting" class="w-3.5 h-3.5 animate-spin" />
+            <Wrench v-else class="w-3.5 h-3.5" />
+            <span>Xác nhận bảo trì</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import {
+  AlertCircle,
+  Wrench,
+  Check,
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle2
+} from 'lucide-vue-next';
 import apiClient from '../../api/client';
 import StatusBadge from '../../components/StatusBadge.vue';
 import RoomTile from '../../components/RoomTile.vue';
@@ -289,6 +440,17 @@ const boardData = ref(null);
 const loading = ref(false);
 const error = ref('');
 const selectedRoom = ref(null);
+
+// Maintenance State (F15)
+const showMaintenanceModal = ref(false);
+const maintenanceRoom = ref(null);
+const maintenanceReason = ref('');
+const confirmIgnoreAffected = ref(false);
+const affectedBookings = ref([]);
+const loadingAffected = ref(false);
+const maintenanceSubmitting = ref(false);
+const maintenanceActionLoading = ref(false);
+const maintenanceError = ref('');
 
 const atTimeInput = ref('');
 const isCustomTime = ref(false);
@@ -419,6 +581,62 @@ const filteredFloors = computed(() => {
     };
   });
 });
+
+const openMaintenanceModal = async (room) => {
+  maintenanceRoom.value = room;
+  maintenanceReason.value = '';
+  confirmIgnoreAffected.value = false;
+  affectedBookings.value = [];
+  maintenanceError.value = '';
+  showMaintenanceModal.value = true;
+  loadingAffected.value = true;
+  try {
+    const res = await apiClient.get(`/rooms/${room.roomId}/affected-bookings`);
+    affectedBookings.value = res || [];
+  } catch (err) {
+    console.error('Lỗi kiểm tra đơn ảnh hưởng:', err);
+  } finally {
+    loadingAffected.value = false;
+  }
+};
+
+const closeMaintenanceModal = () => {
+  showMaintenanceModal.value = false;
+  maintenanceRoom.value = null;
+  maintenanceReason.value = '';
+  affectedBookings.value = [];
+  maintenanceError.value = '';
+};
+
+const submitMaintenance = async () => {
+  if (!maintenanceReason.value.trim() || !maintenanceRoom.value) return;
+  maintenanceSubmitting.value = true;
+  maintenanceError.value = '';
+  try {
+    await apiClient.post(`/rooms/${maintenanceRoom.value.roomId}/maintenance`, {
+      reason: maintenanceReason.value.trim(),
+      ignoreAffectedBookings: confirmIgnoreAffected.value
+    });
+    closeMaintenanceModal();
+    await fetchBoard();
+  } catch (err) {
+    maintenanceError.value = err.response?.data?.detail || err.message || 'Không thể đưa phòng vào bảo trì';
+  } finally {
+    maintenanceSubmitting.value = false;
+  }
+};
+
+const handleEndMaintenance = async (room) => {
+  maintenanceActionLoading.value = true;
+  try {
+    await apiClient.post(`/rooms/${room.roomId}/end-maintenance`);
+    await fetchBoard();
+  } catch (err) {
+    error.value = err.response?.data?.detail || err.message || 'Không thể kết thúc bảo trì';
+  } finally {
+    maintenanceActionLoading.value = false;
+  }
+};
 
 onMounted(() => {
   atTimeInput.value = formatToInputTime(new Date());

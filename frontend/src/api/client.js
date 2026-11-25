@@ -14,8 +14,24 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore();
-    if (authStore.token) {
-      config.headers.Authorization = `Bearer ${authStore.token}`;
+    const guestToken = localStorage.getItem('guest_token');
+
+    // If authorization is already explicitly set on this request, keep it
+    if (!config.headers.Authorization) {
+      // If calling guest APIs or if guest is logged in on guest portal, prioritize guest token
+      if (config.url && config.url.includes('/guest')) {
+        if (guestToken) {
+          config.headers.Authorization = `Bearer ${guestToken}`;
+        } else if (authStore.token) {
+          config.headers.Authorization = `Bearer ${authStore.token}`;
+        }
+      } else if (guestToken && !authStore.token) {
+        config.headers.Authorization = `Bearer ${guestToken}`;
+      } else if (authStore.token) {
+        config.headers.Authorization = `Bearer ${authStore.token}`;
+      } else if (guestToken) {
+        config.headers.Authorization = `Bearer ${guestToken}`;
+      }
     }
     const bookingToken = sessionStorage.getItem('booking_token');
     if (bookingToken) {
@@ -25,8 +41,10 @@ apiClient.interceptors.request.use(
     if (!config.params) {
       config.params = {};
     }
-    if (!config.params.lang) {
+    if (config.params.lang === undefined) {
       config.params.lang = authStore.language;
+    } else if (config.params.lang === null || config.params.lang === '') {
+      delete config.params.lang;
     }
     return config;
   },

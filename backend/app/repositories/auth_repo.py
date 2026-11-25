@@ -15,7 +15,8 @@ class AuthUserData:
         role: str,
         status: str,
         failed_attempts: int,
-        locked_until: Optional[datetime]
+        locked_until: Optional[datetime],
+        phai_doi_mat_khau: bool = False
     ):
         self.user_id = user_id
         self.username = username
@@ -25,6 +26,7 @@ class AuthUserData:
         self.status = status
         self.failed_attempts = failed_attempts
         self.locked_until = locked_until
+        self.phai_doi_mat_khau = phai_doi_mat_khau
 
 def get_user_by_username(conn: oracledb.Connection, username: str) -> Optional[AuthUserData]:
     """Retrieves user by username with role details."""
@@ -32,7 +34,7 @@ def get_user_by_username(conn: oracledb.Connection, username: str) -> Optional[A
         cur.execute(
             """
             SELECT u.nguoi_dung_id, u.ten_dang_nhap, u.mat_khau_bam, u.ho_ten,
-                   v.ma_vai_tro, u.trang_thai, u.so_lan_sai, u.khoa_den
+                   v.ma_vai_tro, u.trang_thai, u.so_lan_sai, u.khoa_den, u.phai_doi_mat_khau
               FROM nguoi_dung u
               JOIN vai_tro v ON u.vai_tro_id = v.vai_tro_id
              WHERE LOWER(u.ten_dang_nhap) = LOWER(:username)
@@ -50,7 +52,8 @@ def get_user_by_username(conn: oracledb.Connection, username: str) -> Optional[A
             role=row[4],
             status=row[5],
             failed_attempts=row[6] or 0,
-            locked_until=row[7]
+            locked_until=row[7],
+            phai_doi_mat_khau=bool(row[8])
         )
 
 def get_user_by_id(conn: oracledb.Connection, user_id: int) -> Optional[AuthUserData]:
@@ -59,7 +62,7 @@ def get_user_by_id(conn: oracledb.Connection, user_id: int) -> Optional[AuthUser
         cur.execute(
             """
             SELECT u.nguoi_dung_id, u.ten_dang_nhap, u.mat_khau_bam, u.ho_ten,
-                   v.ma_vai_tro, u.trang_thai, u.so_lan_sai, u.khoa_den
+                   v.ma_vai_tro, u.trang_thai, u.so_lan_sai, u.khoa_den, u.phai_doi_mat_khau
               FROM nguoi_dung u
               JOIN vai_tro v ON u.vai_tro_id = v.vai_tro_id
              WHERE u.nguoi_dung_id = :user_id
@@ -77,7 +80,8 @@ def get_user_by_id(conn: oracledb.Connection, user_id: int) -> Optional[AuthUser
             role=row[4],
             status=row[5],
             failed_attempts=row[6] or 0,
-            locked_until=row[7]
+            locked_until=row[7],
+            phai_doi_mat_khau=bool(row[8])
         )
 
 def get_login_config_params(conn: oracledb.Connection) -> tuple[int, int]:
@@ -146,12 +150,15 @@ def reset_failed_attempts(conn: oracledb.Connection, user_id: int) -> None:
         )
 
 def update_password_hash(conn: oracledb.Connection, user_id: int, new_hash: str) -> None:
-    """Updates password hash for user."""
+    """Updates password hash for user and clears phai_doi_mat_khau flag."""
     with conn.cursor() as cur:
         cur.execute(
             """
             UPDATE nguoi_dung
-               SET mat_khau_bam = :new_hash
+               SET mat_khau_bam = :new_hash,
+                   phai_doi_mat_khau = FALSE,
+                   so_lan_sai = 0,
+                   khoa_den = NULL
              WHERE nguoi_dung_id = :user_id
             """,
             new_hash=new_hash,

@@ -602,6 +602,7 @@ BEGIN
         'trang_thai' VALUE :NEW.trang_thai,
         'so_lan_sai' VALUE :NEW.so_lan_sai,
         'khoa_den' VALUE :NEW.khoa_den,
+        'phai_doi_mat_khau' VALUE :NEW.phai_doi_mat_khau,
         'ngay_tao' VALUE :NEW.ngay_tao
         RETURNING CLOB)
       INTO v_moi FROM dual;
@@ -616,6 +617,7 @@ BEGIN
         'trang_thai' VALUE :OLD.trang_thai,
         'so_lan_sai' VALUE :OLD.so_lan_sai,
         'khoa_den' VALUE :OLD.khoa_den,
+        'phai_doi_mat_khau' VALUE :OLD.phai_doi_mat_khau,
         'ngay_tao' VALUE :OLD.ngay_tao
         RETURNING CLOB)
       INTO v_cu FROM dual;
@@ -630,6 +632,7 @@ BEGIN
         'trang_thai' VALUE :OLD.trang_thai,
         'so_lan_sai' VALUE :OLD.so_lan_sai,
         'khoa_den' VALUE :OLD.khoa_den,
+        'phai_doi_mat_khau' VALUE :OLD.phai_doi_mat_khau,
         'ngay_tao' VALUE :OLD.ngay_tao
         RETURNING CLOB)
       INTO v_cu FROM dual;
@@ -641,6 +644,7 @@ BEGIN
         'trang_thai' VALUE :NEW.trang_thai,
         'so_lan_sai' VALUE :NEW.so_lan_sai,
         'khoa_den' VALUE :NEW.khoa_den,
+        'phai_doi_mat_khau' VALUE :NEW.phai_doi_mat_khau,
         'ngay_tao' VALUE :NEW.ngay_tao
         RETURNING CLOB)
       INTO v_moi FROM dual;

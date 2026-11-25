@@ -19,6 +19,7 @@ from app.schemas.auth import (
     ChangePasswordRequest
 )
 from app.repositories import auth_repo
+from app.core.rate_limit import rate_limit_login
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 VN_TZ = timezone(timedelta(hours=7))
 
-@router.post("/login")
+@router.post("/login", dependencies=[Depends(rate_limit_login)])
 def login(request: LoginRequest, conn: oracledb.Connection = Depends(get_conn)) -> dict:
     """
     POST /api/v1/auth/login (FR-48).
@@ -112,7 +113,8 @@ def login(request: LoginRequest, conn: oracledb.Connection = Depends(get_conn)) 
             "id": user.user_id,
             "username": user.username,
             "name": user.full_name,
-            "role": user.role
+            "role": user.role,
+            "phaiDoiMatKhau": user.phai_doi_mat_khau
         }
     }
 
@@ -154,7 +156,8 @@ def get_me(current_user: AuthUser = Depends(get_current_user)) -> dict:
             "id": current_user.user_id,
             "username": current_user.username,
             "name": current_user.full_name,
-            "role": current_user.role
+            "role": current_user.role,
+            "phaiDoiMatKhau": current_user.phai_doi_mat_khau
         }
     }
 

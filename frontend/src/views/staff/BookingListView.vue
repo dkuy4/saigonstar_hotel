@@ -80,7 +80,7 @@
 
     <!-- Error Alert -->
     <div v-if="error" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center space-x-2">
-      <span>⚠️</span>
+      <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
       <span>{{ error }}</span>
     </div>
 
@@ -94,7 +94,9 @@
 
       <!-- Empty state -->
       <div v-else-if="!bookings.length" class="py-16 text-center text-slate-400 space-y-2">
-        <div class="text-3xl">📋</div>
+        <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl mx-auto flex items-center justify-center">
+          <ClipboardList class="w-6 h-6" />
+        </div>
         <h3 class="text-sm font-semibold text-slate-700">Không tìm thấy đơn đặt phòng nào</h3>
         <p class="text-xs text-slate-400">Thử thay đổi từ khóa tìm kiếm hoặc bỏ chọn các bộ lọc trạng thái</p>
       </div>
@@ -129,7 +131,7 @@
               <!-- Customer info -->
               <td class="py-3.5 px-4">
                 <div class="font-bold text-slate-800">{{ b.customerName }}</div>
-                <div class="text-[11px] text-slate-400">{{ b.customerPhone }} • {{ b.customerEmail }}</div>
+                <div class="text-[11px] text-slate-400">{{ b.customerPhone }} - {{ b.customerEmail }}</div>
               </td>
 
               <!-- Room info -->
@@ -215,6 +217,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { ClipboardList, AlertCircle } from 'lucide-vue-next';
 import apiClient from '../../api/client';
 import StatusBadge from '../../components/StatusBadge.vue';
 import MoneyText from '../../components/MoneyText.vue';

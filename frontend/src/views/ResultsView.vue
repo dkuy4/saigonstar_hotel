@@ -9,7 +9,7 @@
               :class="searchType === 'NGAY' ? 'bg-sky-100 text-sky-800' : 'bg-purple-100 text-purple-800'">
               {{ searchType === 'NGAY' ? t('search.daily') : t('search.hourly') }}
             </span>
-            <span class="text-xs text-slate-500">•</span>
+            <span class="text-xs text-slate-400">-</span>
             <span class="text-xs text-slate-600 font-medium">{{ guestsCount }} khách</span>
           </div>
 
@@ -25,7 +25,7 @@
           @click="showSearchBox = !showSearchBox"
           class="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center space-x-1.5"
         >
-          <span>✏️</span>
+          <SlidersHorizontal class="w-3.5 h-3.5 text-slate-500" />
           <span>{{ showSearchBox ? 'Ẩn bộ tìm kiếm' : t('search.modifySearch') }}</span>
         </button>
       </div>
@@ -43,7 +43,7 @@
 
     <!-- Error Alert Banner -->
     <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-sm flex items-start space-x-3">
-      <span class="text-lg">⚠️</span>
+      <AlertCircle class="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
       <div>
         <p class="font-semibold">Không thể tải danh sách phòng</p>
         <p class="text-xs mt-0.5">{{ errorMessage }}</p>
@@ -64,8 +64,8 @@
 
     <!-- No Availability Notice -->
     <div v-else-if="!loading && rooms.length === 0 && !errorMessage" class="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-xl mx-auto space-y-4">
-      <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-3xl mx-auto">
-        🏨
+      <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto">
+        <Building2 class="w-8 h-8 text-amber-600" />
       </div>
       <h3 class="text-lg font-bold text-slate-800">{{ t('search.noRooms') }}</h3>
       <p class="text-sm text-slate-500 leading-relaxed">
@@ -85,7 +85,7 @@
         <h3 class="text-lg font-bold text-slate-900">
           {{ t('search.resultsTitle') }} ({{ rooms.length }} hạng phòng)
         </h3>
-        <span class="text-xs text-slate-500 italic">Giá đã bao gồm toàn bộ thuế VAT và phí dịch vụ (BR-59)</span>
+        <span class="text-xs text-slate-500 italic">Giá đã bao gồm toàn bộ thuế VAT và phí dịch vụ</span>
       </div>
 
       <div class="grid grid-cols-1 gap-6">
@@ -116,10 +116,19 @@
                 <div>
                   <h4 class="text-xl font-bold text-slate-900">{{ room.name }}</h4>
                   <p class="text-xs text-slate-500 flex items-center gap-2 mt-1">
-                    <span>👥 Tối đa {{ room.capacity }} người</span>
-                    <span>•</span>
-                    <span v-if="room.hourly_allowed" class="text-sky-600 font-medium">⏱️ Cho thuê theo giờ & theo ngày</span>
-                    <span v-else class="text-slate-500">📅 Chỉ thuê theo ngày</span>
+                    <span class="flex items-center space-x-1">
+                      <Users class="w-3.5 h-3.5 text-slate-400" />
+                      <span>Tối đa {{ room.capacity }} người</span>
+                    </span>
+                    <span>-</span>
+                    <span v-if="room.hourly_allowed" class="text-sky-600 font-medium flex items-center space-x-1">
+                      <Clock class="w-3.5 h-3.5" />
+                      <span>Cho thuê theo giờ & theo ngày</span>
+                    </span>
+                    <span v-else class="text-slate-500 flex items-center space-x-1">
+                      <Calendar class="w-3.5 h-3.5 text-slate-400" />
+                      <span>Chỉ thuê theo ngày</span>
+                    </span>
                   </p>
                 </div>
               </div>
@@ -134,9 +143,10 @@
                 <span
                   v-for="(amenity, idx) in room.amenities.split(',')"
                   :key="idx"
-                  class="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] rounded-lg font-medium"
+                  class="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] rounded-lg font-medium flex items-center space-x-1"
                 >
-                  ✓ {{ amenity.trim() }}
+                  <Check class="w-3 h-3 text-emerald-600" />
+                  <span>{{ amenity.trim() }}</span>
                 </span>
               </div>
             </div>
@@ -184,6 +194,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { SlidersHorizontal, AlertCircle, Building2, Users, Clock, Calendar, Check } from 'lucide-vue-next';
 import apiClient from '../api/client';
 import SearchBox from '../components/SearchBox.vue';
 import MoneyText from '../components/MoneyText.vue';
@@ -204,6 +215,12 @@ const guestsCount = computed(() => route.query.guests || '2');
 
 const formatDateTime = (isoStr) => {
   if (!isoStr) return '';
+  // If string contains explicit timezone or date-time components
+  const match = isoStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (match) {
+    const [_, y, m, d, hh, mm] = match;
+    return `${hh}:${mm} ngày ${d}/${m}/${y}`;
+  }
   const d = new Date(isoStr);
   return d.toLocaleString('vi-VN', {
     day: '2-digit',

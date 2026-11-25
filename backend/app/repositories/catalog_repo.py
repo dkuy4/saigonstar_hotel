@@ -48,6 +48,121 @@ class CatalogRepository:
             return result
 
     @staticmethod
+    def get_room_types_admin(conn: oracledb.Connection) -> List[Dict[str, Any]]:
+        # Fetch all 4 room types
+        base_sql = """
+        SELECT lp.loai_phong_id, lp.ma_hang, lp.suc_chua,
+               CASE WHEN lp.cho_thue_gio = 1 OR lp.cho_thue_gio = TRUE THEN 1 ELSE 0 END AS cho_thue_gio,
+               lp.anh_url,
+               (SELECT don_gia FROM bang_gia bg 
+                 WHERE bg.loai_phong_id = lp.loai_phong_id AND bg.loai_gia = 'NGAY' 
+                   AND bg.hieu_luc_tu <= TRUNC(SYSDATE) 
+                   AND (bg.hieu_luc_den IS NULL OR bg.hieu_luc_den >= TRUNC(SYSDATE))
+                   AND ROWNUM = 1) AS gia_ngay,
+               (SELECT don_gia FROM bang_gia bg 
+                 WHERE bg.loai_phong_id = lp.loai_phong_id AND bg.loai_gia = 'GIO' 
+                   AND bg.hieu_luc_tu <= TRUNC(SYSDATE) 
+                   AND (bg.hieu_luc_den IS NULL OR bg.hieu_luc_den >= TRUNC(SYSDATE))
+                   AND ROWNUM = 1) AS gia_gio
+          FROM loai_phong lp
+         ORDER BY lp.loai_phong_id
+        """
+        with conn.cursor() as cur:
+            cur.execute(base_sql)
+            base_rows = fetch_cursor_as_dicts(cur)
+
+            # Fetch all translations
+            cur.execute("SELECT loai_phong_id, ngon_ngu, ten, mo_ta, tien_nghi FROM loai_phong_dich")
+            trans_rows = fetch_cursor_as_dicts(cur)
+
+        trans_map: Dict[int, Dict[str, Any]] = {}
+        for tr in trans_rows:
+            r_id = tr["loai_phong_id"]
+            if r_id not in trans_map:
+                trans_map[r_id] = {}
+            trans_map[r_id][tr["ngon_ngu"]] = {
+                "lang": tr["ngon_ngu"],
+                "name": tr["ten"],
+                "description": tr["mo_ta"],
+                "amenities": tr["tien_nghi"]
+            }
+
+        res = []
+        for r in base_rows:
+            r_id = r["loai_phong_id"]
+            res.append({
+                "id": r_id,
+                "code": r["ma_hang"],
+                "capacity": r["suc_chua"],
+                "hourly_allowed": bool(r["cho_thue_gio"]),
+                "image_url": r["anh_url"],
+                "translations": trans_map.get(r_id, {}),
+                "daily_price": float(r["gia_ngay"]) if r.get("gia_ngay") is not None else None,
+                "hourly_price": float(r["gia_gio"]) if r.get("gia_gio") is not None else None
+            })
+        return res
+
+    @staticmethod
+    def update_room_type(
+        conn: oracledb.Connection,
+        room_type_id: int,
+        capacity: int,
+        image_url: Optional[str],
+        translations: List[Dict[str, Any]]
+    ) -> None:
+        with conn.cursor() as cur:
+            # 1. Update loai_phong
+            cur.execute(
+                """
+                UPDATE hotel_owner.loai_phong
+                   SET suc_chua = :p_cap,
+                       anh_url = COALESCE(:p_img, anh_url)
+                 WHERE loai_phong_id = :p_id
+                """,
+                p_cap=capacity,
+                p_img=image_url,
+                p_id=room_type_id
+            )
+
+            # 2. Merge translations
+            merge_sql = """
+            MERGE INTO hotel_owner.loai_phong_dich d
+            USING (
+                SELECT :p_id AS loai_phong_id,
+                       :p_lang AS ngon_ngu,
+                       :p_ten AS ten,
+                       :p_mota AS mo_ta,
+                       :p_tiennghi AS tien_nghi
+                  FROM dual
+            ) s
+            ON (d.loai_phong_id = s.loai_phong_id AND d.ngon_ngu = s.ngon_ngu)
+            WHEN MATCHED THEN
+                UPDATE SET d.ten = s.ten,
+                           d.mo_ta = s.mo_ta,
+                           d.tien_nghi = s.tien_nghi
+            WHEN NOT MATCHED THEN
+                INSERT (loai_phong_id, ngon_ngu, ten, mo_ta, tien_nghi, ngay_tao)
+                VALUES (s.loai_phong_id, s.ngon_ngu, s.ten, s.mo_ta, s.tien_nghi, SYSTIMESTAMP)
+            """
+            for tr in translations:
+                lang = tr.get("lang")
+                name = tr.get("name", "").strip()
+                if not name and lang in ("vi", "en"):
+                    raise BusinessException("VALIDATION_ERROR", f"Tên hạng phòng bắt buộc cho ngôn ngữ '{lang}'")
+                if not name:
+                    # Non-mandatory languages can be skipped if empty
+                    continue
+                cur.execute(
+                    merge_sql,
+                    p_id=room_type_id,
+                    p_lang=lang,
+                    p_ten=name,
+                    p_mota=tr.get("description", "").strip() or None,
+                    p_tiennghi=tr.get("amenities", "").strip() or None
+                )
+            conn.commit()
+
+    @staticmethod
     def get_exchange_rates(conn: oracledb.Connection) -> List[Dict[str, Any]]:
         sql = """
         SELECT ngoai_te, ty_gia_vnd, ngay_cap_nhat

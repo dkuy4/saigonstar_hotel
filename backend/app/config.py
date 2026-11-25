@@ -21,6 +21,13 @@ class Settings(BaseSettings):
     
     # API Key for Integration (AC-18)
     API_KEY_INTEGRATION: str = "demo-integration-api-key-2026"
+
+    # Rate Limiting & CAPTCHA (F21, NFR-16)
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_LOGIN_PER_MIN: int = 15
+    RATE_LIMIT_API_PER_MIN: int = 120
+    CAPTCHA_ENABLED: bool = False
+    CAPTCHA_TEST_SECRET: str = "test-captcha-pass"
     
     # SMTP
     SMTP_HOST: str = "localhost"

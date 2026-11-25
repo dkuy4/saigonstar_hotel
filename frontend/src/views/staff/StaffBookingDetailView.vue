@@ -35,14 +35,15 @@
           :disabled="loading"
           class="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center space-x-1.5 shadow-sm"
         >
-          <span :class="{ 'animate-spin': loading }">🔄</span>
+          <RefreshCw :class="{ 'animate-spin': loading }" class="w-3.5 h-3.5 text-slate-500" />
           <span>Làm mới</span>
         </button>
         <router-link
           to="/nv/don"
-          class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition shadow-sm"
+          class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1"
         >
-          ← Danh sách đơn
+          <ArrowLeft class="w-3.5 h-3.5 text-slate-500" />
+          <span>Danh sách đơn</span>
         </router-link>
       </div>
     </div>
@@ -50,7 +51,7 @@
     <!-- Alert Messages -->
     <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center justify-between">
       <div class="flex items-center space-x-2">
-        <span class="text-lg">⚠️</span>
+        <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
         <span>{{ errorMessage }}</span>
       </div>
       <button @click="errorMessage = ''" class="font-bold text-rose-600 hover:text-rose-800">×</button>
@@ -58,7 +59,7 @@
 
     <div v-if="successMessage" class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between">
       <div class="flex items-center space-x-2">
-        <span class="text-lg">✅</span>
+        <CheckCircle2 class="w-4 h-4 text-emerald-600 flex-shrink-0" />
         <span>{{ successMessage }}</span>
       </div>
       <button @click="successMessage = ''" class="font-bold text-emerald-600 hover:text-emerald-800">×</button>
@@ -87,7 +88,7 @@
             @click="openCheckInModal"
             class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center space-x-1.5"
           >
-            <span>🏨</span>
+            <KeyRound class="w-3.5 h-3.5 text-white" />
             <span>Check-in (Nhận phòng)</span>
           </button>
 
@@ -97,7 +98,7 @@
             @click="openRescheduleModal"
             class="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1.5"
           >
-            <span>📅</span>
+            <Calendar class="w-3.5 h-3.5 text-white" />
             <span>Đổi lịch</span>
           </button>
 
@@ -107,7 +108,7 @@
             @click="openExtendModal"
             class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1.5"
           >
-            <span>⏱️</span>
+            <Clock class="w-3.5 h-3.5 text-white" />
             <span>Gia hạn lưu trú</span>
           </button>
 
@@ -117,18 +118,28 @@
             @click="openChangeRoomModal"
             class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1.5"
           >
-            <span>🔄</span>
+            <RefreshCw class="w-3.5 h-3.5 text-white" />
             <span>Đổi phòng sự cố</span>
           </button>
 
-          <!-- Desk Payment Action -->
+          <!-- Desk Payment Action (F12) -->
           <button
-            v-if="booking.actions?.can_pay"
+            v-if="['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'].includes(booking.status)"
             @click="openPaymentModal"
-            class="px-3.5 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1.5"
+            class="px-3.5 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1.5 active:scale-95"
           >
-            <span>💵</span>
+            <Banknote class="w-3.5 h-3.5 text-white" />
             <span>Thu tiền quầy</span>
+          </button>
+
+          <!-- Refund Action (F12) -->
+          <button
+            v-if="booking.paid_amount > 0"
+            @click="openRefundModal"
+            class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1.5 active:scale-95"
+          >
+            <Undo2 class="w-3.5 h-3.5 text-white" />
+            <span>Đề xuất hoàn tiền</span>
           </button>
 
           <!-- Check-out Action -->
@@ -137,7 +148,7 @@
             @click="openCheckOutModal"
             class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center space-x-1.5"
           >
-            <span>🚪</span>
+            <DoorOpen class="w-3.5 h-3.5 text-white" />
             <span>Check-out & Hóa đơn</span>
           </button>
 
@@ -147,8 +158,19 @@
             @click="openCancelModal"
             class="px-3.5 py-2 bg-slate-800 hover:bg-rose-900 text-rose-300 border border-rose-700/50 rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1.5"
           >
-            <span>✖</span>
+            <X class="w-3.5 h-3.5 text-rose-300" />
             <span>Hủy đơn</span>
+          </button>
+
+          <!-- No-Show Action (F13, FR-20, AC-11) -->
+          <button
+            v-if="booking.status === 'CONFIRMED'"
+            @click="openNoShowModal"
+            class="px-3.5 py-2 bg-amber-950/60 hover:bg-amber-900 text-amber-300 border border-amber-700/60 rounded-xl text-xs font-semibold transition shadow-sm flex items-center space-x-1.5"
+            title="Đánh dấu khách không đến nhận phòng"
+          >
+            <UserX class="w-3.5 h-3.5 text-amber-300" />
+            <span>Đóng NO_SHOW</span>
           </button>
         </div>
       </div>
@@ -159,7 +181,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
           <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 flex items-center justify-between">
             <span>Thông tin khách hàng</span>
-            <span>👤</span>
+            <User class="w-4 h-4 text-slate-400" />
           </div>
           <div class="space-y-1.5 text-xs">
             <div class="text-sm font-bold text-slate-900">{{ booking.customer?.full_name || booking.customer?.fullName }}</div>
@@ -179,6 +201,33 @@
               <span class="font-medium text-slate-400">Quốc tịch:</span>
               <span>{{ booking.customer.nationality }}</span>
             </div>
+            <!-- Trạng thái Email đơn & Nút gửi lại (F14, FR-23, FR-53) -->
+            <div class="pt-2.5 mt-2 border-t border-slate-100 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-slate-400">Email thông báo:</span>
+                <span
+                  v-if="booking.emails?.length"
+                  class="px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                  :class="getEmailStatusBadge(booking.emails[0].status)"
+                >
+                  {{ formatEmailStatus(booking.emails[0].status) }} ({{ booking.emails[0].emailType }})
+                </span>
+                <span v-else class="text-[11px] text-slate-400 italic">Chưa xếp hàng đợi</span>
+              </div>
+              <div v-if="booking.emails?.length && booking.emails[0].error" class="text-[11px] text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-100 break-words">
+                Lỗi gửi: {{ booking.emails[0].error }}
+              </div>
+              <button
+                type="button"
+                @click="handleResendEmail"
+                :disabled="resendingEmail"
+                class="w-full py-1.5 px-3 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-xl text-[11px] font-bold transition flex items-center justify-center space-x-1.5 disabled:opacity-50"
+              >
+                <RefreshCw v-if="resendingEmail" class="w-3.5 h-3.5 animate-spin" />
+                <Mail v-else class="w-3.5 h-3.5 text-sky-600" />
+                <span>{{ resendingEmail ? 'Đang xếp hàng đợi...' : 'Gửi lại email xác nhận' }}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -186,7 +235,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
           <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 flex items-center justify-between">
             <span>Thời gian lưu trú</span>
-            <span>🕒</span>
+            <Clock class="w-4 h-4 text-slate-400" />
           </div>
           <div class="space-y-2 text-xs">
             <div>
@@ -215,7 +264,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
           <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 flex items-center justify-between">
             <span>Tài chính & Thanh toán</span>
-            <span>💰</span>
+            <Coins class="w-4 h-4 text-slate-400" />
           </div>
           <div class="space-y-1.5 text-xs">
             <div class="flex justify-between text-slate-600">
@@ -249,7 +298,7 @@
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
         <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
           <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center space-x-2">
-            <span>🏨</span>
+            <Building2 class="w-4 h-4 text-slate-500" />
             <span>Chi tiết các đoạn lưu trú (Phòng được gán)</span>
           </h3>
           <span class="text-xs text-slate-500 font-mono">{{ booking.segments?.length || 0 }} đoạn</span>
@@ -290,7 +339,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center space-x-2">
-              <span>💳</span>
+              <CreditCard class="w-4 h-4 text-slate-500" />
               <span>Lịch sử thanh toán</span>
             </h3>
             <span class="text-xs text-slate-500 font-mono">{{ booking.transactions?.length || 0 }} giao dịch</span>
@@ -334,7 +383,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center space-x-2">
-              <span>💸</span>
+              <Undo2 class="w-4 h-4 text-slate-500" />
               <span>Lịch sử hoàn tiền</span>
             </h3>
             <span class="text-xs text-slate-500 font-mono">{{ booking.refunds?.length || 0 }} khoản hoàn</span>
@@ -377,7 +426,7 @@
       <div v-if="booking.invoice" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
         <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 flex items-center justify-between">
           <span class="flex items-center space-x-1.5">
-            <span>🧾</span>
+            <Receipt class="w-4 h-4 text-slate-500" />
             <span>Hóa đơn lưu trú đã cấp</span>
           </span>
           <span class="font-mono text-slate-900 font-bold">Số HĐ: {{ booking.invoice.invoice_number }}</span>
@@ -395,6 +444,56 @@
             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Tổng thanh toán</span>
             <span class="font-bold text-sky-700 font-mono">{{ formatCurrency(booking.invoice.total_amount) }}</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Email Queue History (F14, FR-23, FR-53) -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center space-x-2">
+            <Mail class="w-4 h-4 text-slate-500" />
+            <span>Trạng thái & Lịch sử gửi Email (Hàng đợi)</span>
+          </h3>
+          <span class="text-xs text-slate-500 font-mono">{{ booking.emails?.length || 0 }} email</span>
+        </div>
+
+        <div v-if="!booking.emails?.length" class="p-6 text-center text-xs text-slate-400 italic">
+          Chưa có email nào được xếp vào hàng đợi cho đơn này
+        </div>
+        <div v-else class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-100/75 text-slate-700 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-200">
+              <tr>
+                <th class="p-3">ID</th>
+                <th class="p-3">Loại email</th>
+                <th class="p-3 text-center">Ngôn ngữ</th>
+                <th class="p-3 text-center">Trạng thái</th>
+                <th class="p-3 text-center">Số lần thử</th>
+                <th class="p-3">Lần gửi cuối</th>
+                <th class="p-3">Ghi chú / Lỗi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr v-for="em in booking.emails" :key="em.emailId" class="hover:bg-slate-50/75">
+                <td class="p-3 font-mono text-slate-500">#{{ em.emailId }}</td>
+                <td class="p-3 font-semibold text-slate-800">{{ em.emailType }}</td>
+                <td class="p-3 text-center font-mono uppercase">{{ em.language }}</td>
+                <td class="p-3 text-center">
+                  <span
+                    class="px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                    :class="getEmailStatusBadge(em.status)"
+                  >
+                    {{ formatEmailStatus(em.status) }}
+                  </span>
+                </td>
+                <td class="p-3 text-center font-mono">{{ em.attempts }}</td>
+                <td class="p-3 font-mono text-[11px]">{{ formatDateTime(em.lastSentAt || em.createdAt) }}</td>
+                <td class="p-3 text-[11px] text-rose-600 max-w-[240px] truncate" :title="em.error || ''">
+                  {{ em.error || '-' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -442,7 +541,7 @@
       <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div class="flex items-center space-x-2">
-            <span class="text-xl">🏨</span>
+            <Building2 class="w-5 h-5 text-sky-600" />
             <h3 class="text-base font-bold text-slate-900">Check-in nhận phòng: {{ booking?.booking_code }}</h3>
           </div>
           <button @click="showCheckInModal = false" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
@@ -462,8 +561,8 @@
 
         <!-- Modal Error Message -->
         <div v-if="checkInError" class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 space-y-1">
-          <div class="font-bold flex items-center space-x-1">
-            <span>⚠️</span>
+          <div class="font-bold flex items-center space-x-1.5">
+            <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
             <span>Không thể nhận phòng</span>
           </div>
           <div>{{ checkInError }}</div>
@@ -505,8 +604,9 @@
               placeholder="Nhập số CCCD (được mã hóa NFR-13)"
               class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-emerald-500 outline-none"
             />
-            <span class="text-[10px] text-slate-400 mt-0.5 block">
-              🔒 Số giấy tờ được mã hóa AES theo tiêu chuẩn bảo mật dữ liệu khách hàng (NFR-13).
+            <span class="text-[10px] text-slate-400 mt-0.5 flex items-center space-x-1">
+              <Lock class="w-3 h-3 text-slate-400 inline" />
+              <span>Số giấy tờ được mã hóa AES theo tiêu chuẩn bảo mật dữ liệu khách hàng (NFR-13).</span>
             </span>
           </div>
 
@@ -646,7 +746,7 @@
         <!-- Conflict / Error + Suggested Rooms (AC-12) -->
         <div v-if="extendError || extendPreview?.has_conflict" class="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 space-y-2">
           <div class="font-bold flex items-center space-x-1.5">
-            <span>⚠️</span>
+            <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
             <span>Không thể gia hạn trên phòng hiện tại (EXTEND_CONFLICT)</span>
           </div>
           <div>
@@ -691,8 +791,232 @@
             :disabled="submittingAction || loadingExtendPreview || !extendPreview || extendPreview.has_conflict"
             class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 flex items-center space-x-1.5"
           >
-            <span v-if="submittingAction" class="animate-spin">⏳</span>
+            <div v-if="submittingAction" class="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent"></div>
             <span>{{ submittingAction ? 'Đang gia hạn...' : 'Xác nhận gia hạn' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Thu tiền quầy (F12) -->
+    <div v-if="showPaymentModal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <Banknote class="w-5 h-5 text-teal-600" />
+            <h3 class="text-base font-bold text-slate-900">Thu tiền quầy: {{ booking?.booking_code }}</h3>
+          </div>
+          <button @click="showPaymentModal = false" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+        </div>
+
+        <div v-if="paymentError" class="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center space-x-2">
+          <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
+          <span>{{ paymentError }}</span>
+        </div>
+
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+          <div class="flex justify-between text-slate-600">
+            <span>Tổng tiền đơn:</span>
+            <span class="font-mono font-bold text-slate-800">{{ formatCurrency(booking?.total_amount) }}</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Đã thanh toán:</span>
+            <span class="font-mono font-bold text-emerald-700">{{ formatCurrency(booking?.paid_amount) }}</span>
+          </div>
+          <div class="flex justify-between font-bold text-slate-900 pt-1 border-t border-slate-200">
+            <span>Còn thiếu:</span>
+            <span class="font-mono text-amber-700">{{ formatCurrency(booking?.remaining_amount) }}</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Phương thức thanh toán *</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              v-for="m in paymentMethods"
+              :key="m.key"
+              @click="paymentForm.method = m.key"
+              class="py-2 px-2 text-center rounded-xl border text-xs font-semibold transition"
+              :class="paymentForm.method === m.key ? 'bg-teal-50 border-teal-500 text-teal-800 ring-2 ring-teal-500/20' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'"
+            >
+              {{ m.label }}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-semibold text-slate-700">Số tiền thu (VND) *</label>
+            <button
+              type="button"
+              v-if="booking?.remaining_amount > 0"
+              @click="paymentForm.amount = booking.remaining_amount"
+              class="text-[11px] text-teal-700 font-semibold hover:underline"
+            >
+              Thu đủ còn thiếu
+            </button>
+          </div>
+          <input
+            v-model.number="paymentForm.amount"
+            type="number"
+            min="1000"
+            step="1000"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono font-bold focus:ring-2 focus:ring-teal-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Ghi chú thanh toán</label>
+          <input
+            v-model="paymentForm.notes"
+            type="text"
+            placeholder="VD: Khách trả tiền mặt tại quầy, cọc thêm..."
+            class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-teal-500 outline-none"
+          />
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+          <button
+            type="button"
+            @click="showPaymentModal = false"
+            class="px-4 py-2 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-50 transition"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            @click="submitDeskPayment"
+            :disabled="paymentSubmitting || paymentForm.amount <= 0"
+            class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 flex items-center space-x-1.5"
+          >
+            <RefreshCw v-if="paymentSubmitting" class="w-3.5 h-3.5 animate-spin" />
+            <span>{{ paymentSubmitting ? 'Đang ghi nhận...' : 'Xác nhận thu tiền' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Yêu cầu hoàn tiền (F12) -->
+    <div v-if="showRefundModal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <Undo2 class="w-5 h-5 text-amber-600" />
+            <h3 class="text-base font-bold text-slate-900">Yêu cầu hoàn tiền: {{ booking?.booking_code }}</h3>
+          </div>
+          <button @click="showRefundModal = false" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+        </div>
+
+        <div v-if="refundError" class="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center space-x-2">
+          <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
+          <span>{{ refundError }}</span>
+        </div>
+
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs space-y-1">
+          <div class="flex justify-between text-amber-900">
+            <span>Đã thanh toán thực tế:</span>
+            <span class="font-mono font-bold">{{ formatCurrency(booking?.paid_amount) }}</span>
+          </div>
+          <p class="text-[11px] text-amber-700">
+            Quy định BR-25: Hoàn tiền trả về đúng phương thức thanh toán ban đầu (quầy hoặc cổng).
+          </p>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-semibold text-slate-700">Số tiền muốn hoàn (VND) *</label>
+            <button
+              type="button"
+              @click="refundForm.amount = booking?.paid_amount || 0"
+              class="text-[11px] text-amber-700 font-semibold hover:underline"
+            >
+              Hoàn toàn bộ
+            </button>
+          </div>
+          <input
+            v-model.number="refundForm.amount"
+            type="number"
+            min="1000"
+            :max="booking?.paid_amount"
+            step="1000"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono font-bold focus:ring-2 focus:ring-amber-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Lý do hoàn tiền (bắt buộc) *</label>
+          <textarea
+            v-model="refundForm.reason"
+            rows="3"
+            required
+            placeholder="Nhập lý do chi tiết (VD: Khách trả phòng sớm, phòng có sự cố kỹ thuật...)"
+            class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 outline-none"
+          ></textarea>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+          <button
+            type="button"
+            @click="showRefundModal = false"
+            class="px-4 py-2 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-50 transition"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            @click="submitRefund"
+            :disabled="refundSubmitting || refundForm.amount <= 0 || !refundForm.reason.trim()"
+            class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 flex items-center space-x-1.5"
+          >
+            <RefreshCw v-if="refundSubmitting" class="w-3.5 h-3.5 animate-spin" />
+            <span>{{ refundSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu hoàn tiền' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal xác nhận Đóng NO_SHOW (F13, FR-20, AC-11) -->
+    <div v-if="showNoShowModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-100">
+        <div class="px-6 py-4 bg-amber-50 border-b border-amber-100 flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-amber-800">
+            <UserX class="w-5 h-5 text-amber-600" />
+            <h3 class="font-bold text-base">Xác nhận Đóng NO_SHOW</h3>
+          </div>
+          <button @click="showNoShowModal = false" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+        </div>
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Bạn có chắc chắn muốn chuyển đơn đặt phòng <strong class="text-slate-800 font-bold">{{ booking.code }}</strong> sang trạng thái <strong>NO_SHOW</strong> (khách không đến nhận phòng)?
+          </p>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-500 space-y-1">
+            <p>• Khách hàng: <strong>{{ booking.customer?.name }}</strong> ({{ booking.customer?.phone }})</p>
+            <p>• Thời gian nhận dự kiến: <strong>{{ formatDateTime(booking.checkin) }}</strong></p>
+            <p>• Lưu ý: Theo quy tắc BR-27, BR-28, đơn NO_SHOW sẽ không được hoàn tiền tự động.</p>
+          </div>
+          <div v-if="noShowError" class="p-3 bg-rose-50 text-rose-600 rounded-xl text-xs border border-rose-200">
+            {{ noShowError }}
+          </div>
+        </div>
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-2">
+          <button
+            type="button"
+            @click="showNoShowModal = false"
+            class="px-4 py-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-600 transition"
+          >
+            Hủy bỏ
+          </button>
+          <button
+            type="button"
+            @click="confirmNoShow"
+            :disabled="submittingAction"
+            class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 flex items-center space-x-1.5"
+          >
+            <RefreshCw v-if="submittingAction" class="w-3.5 h-3.5 animate-spin" />
+            <span>{{ submittingAction ? 'Đang xử lý...' : 'Xác nhận NO_SHOW' }}</span>
           </button>
         </div>
       </div>
@@ -703,6 +1027,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import {
+  RefreshCw, ArrowLeft, AlertCircle, CheckCircle2,
+  KeyRound, Calendar, Clock, Banknote, DoorOpen, X,
+  User, Coins, Building2, CreditCard, Undo2, Receipt, Lock, UserX, Mail
+} from 'lucide-vue-next';
 import apiClient from '../../api/client';
 import StatusBadge from '../../components/StatusBadge.vue';
 
@@ -903,8 +1232,143 @@ const openCheckOutModal = () => {
   alert('Mở màn hình Check-out và Hóa đơn (F11)');
 };
 
+// Desk Payment Modal (F12)
+const showPaymentModal = ref(false);
+const paymentSubmitting = ref(false);
+const paymentError = ref('');
+const paymentForm = ref({
+  method: 'TIEN_MAT',
+  amount: 0,
+  notes: ''
+});
+
+const paymentMethods = [
+  { key: 'TIEN_MAT', label: '💵 Tiền mặt' },
+  { key: 'CHUYEN_KHOAN', label: '🏦 Chuyển khoản' },
+  { key: 'THE', label: '💳 Quẹt thẻ (POS)' }
+];
+
 const openPaymentModal = () => {
-  alert('Mở hộp thoại thu tiền quầy (F12)');
+  paymentError.value = '';
+  paymentForm.value = {
+    method: 'TIEN_MAT',
+    amount: booking.value?.remaining_amount > 0 ? booking.value.remaining_amount : 0,
+    notes: ''
+  };
+  showPaymentModal.value = true;
+};
+
+const submitDeskPayment = async () => {
+  if (paymentForm.value.amount <= 0) return;
+  paymentSubmitting.value = true;
+  paymentError.value = '';
+  try {
+    await apiClient.post(`/bookings/${booking.value.id}/payments`, {
+      method: paymentForm.value.method,
+      amount: paymentForm.value.amount,
+      notes: paymentForm.value.notes?.trim() || null
+    });
+    successMessage.value = `Thu tiền quầy thành công (+${formatCurrency(paymentForm.value.amount)})`;
+    showPaymentModal.value = false;
+    await fetchBooking();
+  } catch (err) {
+    paymentError.value = err.detail || err.message || 'Lỗi khi thu tiền quầy';
+  } finally {
+    paymentSubmitting.value = false;
+  }
+};
+
+// Refund Modal (F12)
+const showRefundModal = ref(false);
+const refundSubmitting = ref(false);
+const refundError = ref('');
+const refundForm = ref({
+  amount: 0,
+  reason: ''
+});
+
+const openRefundModal = () => {
+  refundError.value = '';
+  refundForm.value = {
+    amount: booking.value?.paid_amount || 0,
+    reason: ''
+  };
+  showRefundModal.value = true;
+};
+
+const submitRefund = async () => {
+  if (refundForm.value.amount <= 0 || !refundForm.value.reason.trim()) return;
+  refundSubmitting.value = true;
+  refundError.value = '';
+  try {
+    await apiClient.post('/refunds', {
+      bookingId: booking.value.id,
+      amount: refundForm.value.amount,
+      reason: refundForm.value.reason.trim()
+    });
+    successMessage.value = 'Đã gửi yêu cầu hoàn tiền thành công!';
+    showRefundModal.value = false;
+    await fetchBooking();
+  } catch (err) {
+    refundError.value = err.detail || err.message || 'Lỗi khi tạo yêu cầu hoàn tiền';
+  } finally {
+    refundSubmitting.value = false;
+  }
+};
+
+const showNoShowModal = ref(false);
+const noShowError = ref('');
+
+const openNoShowModal = () => {
+  noShowError.value = '';
+  showNoShowModal.value = true;
+};
+
+const confirmNoShow = async () => {
+  submittingAction.value = true;
+  noShowError.value = '';
+  try {
+    const res = await apiClient.post(`/bookings/${booking.value.id}/no-show`);
+    successMessage.value = res.message || 'Đã đóng đơn NO_SHOW thành công!';
+    showNoShowModal.value = false;
+    await fetchBooking();
+  } catch (err) {
+    noShowError.value = err.message || err.detail || 'Lỗi khi đóng đơn NO_SHOW';
+  } finally {
+    submittingAction.value = false;
+  }
+};
+
+const resendingEmail = ref(false);
+
+const handleResendEmail = async () => {
+  if (!booking.value?.id) return;
+  resendingEmail.value = true;
+  errorMessage.value = '';
+  successMessage.value = '';
+  try {
+    const res = await apiClient.post(`/bookings/${booking.value.id}/resend-email`);
+    successMessage.value = res.message || 'Đã xếp email xác nhận vào hàng đợi gửi thành công!';
+    await fetchBooking();
+  } catch (err) {
+    errorMessage.value = err.message || err.detail || 'Lỗi khi gửi lại email xác nhận';
+  } finally {
+    resendingEmail.value = false;
+  }
+};
+
+const formatEmailStatus = (st) => {
+  if (st === 'DA_GUI') return 'Đã gửi';
+  if (st === 'CHO_GUI') return 'Chờ gửi';
+  if (st === 'LOI') return 'Lỗi gửi';
+  return st || '-';
+};
+
+const getEmailStatusBadge = (st) => {
+  if (st === 'DA_GUI') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+  if (st === 'CHO_GUI') return 'bg-amber-50 text-amber-700 border-amber-200';
+  if (st === 'LOI') return 'bg-rose-50 text-rose-700 border-rose-200';
+  return 'bg-slate-100 text-slate-600 border-slate-200';
 };
 
 const formatCurrency = (val) => {

@@ -6,10 +6,10 @@
         ⏳
       </div>
       <div>
-        <span class="text-xs uppercase tracking-widest font-bold opacity-80">Trạng thái: Giữ chỗ trực tuyến (HOLD)</span>
+        <span class="text-xs uppercase tracking-widest font-bold opacity-80">Trạng thái: Đang giữ phòng trực tuyến</span>
         <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Đơn đặt phòng đang được giữ</h2>
         <p class="text-xs sm:text-sm text-amber-100 max-w-md mx-auto mt-1">
-          Phòng của quý khách đã được khóa trên hệ thống. Vui lòng hoàn tất thanh toán trước khi hết giờ (BR-17).
+          Phòng của quý khách đã được giữ chỗ thành công. Quý khách vui lòng hoàn tất thanh toán trong vòng 15 phút để đảm bảo quyền nhận phòng.
         </p>
       </div>
 
@@ -23,8 +23,9 @@
     </div>
 
     <!-- Error Alert -->
-    <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs font-semibold">
-      ⚠️ {{ errorMessage }}
+    <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs font-semibold flex items-center space-x-2">
+      <AlertCircle class="w-4 h-4 text-rose-600 flex-shrink-0" />
+      <span>{{ errorMessage }}</span>
     </div>
 
     <!-- Booking Details Card -->
@@ -37,10 +38,16 @@
         <StatusBadge :status="booking.status" />
       </div>
 
-      <div class="grid grid-cols-2 gap-4 text-xs">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
         <div>
           <span class="text-slate-400 block">Hạng phòng:</span>
-          <span class="font-bold text-slate-800 text-sm">{{ booking.room_type }}</span>
+          <span class="font-bold text-slate-800 text-sm">{{ getRoomTypeLabel(booking) }}</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">Số phòng xếp:</span>
+          <span class="font-bold text-sky-700 text-sm">
+            {{ getRoomNumber(booking) }}
+          </span>
         </div>
         <div>
           <span class="text-slate-400 block">Số lượng khách:</span>
@@ -89,7 +96,7 @@
           @click="proceedToPayment"
           class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition disabled:opacity-50 flex items-center justify-center space-x-2"
         >
-          <span>💳</span>
+          <CreditCard class="w-4 h-4" />
           <span>{{ loading ? 'Đang kết nối cổng...' : 'Chuyển đến Cổng thanh toán trực tuyến' }}</span>
         </button>
       </div>
@@ -100,6 +107,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { AlertCircle, CreditCard } from 'lucide-vue-next';
 import apiClient from '../api/client';
 import StatusBadge from '../components/StatusBadge.vue';
 import MoneyText from '../components/MoneyText.vue';
@@ -121,6 +129,27 @@ const formatDateTime = (iso) => {
   });
 };
 
+const getRoomTypeLabel = (b) => {
+  if (!b) return '';
+  const code = b.room_type || b.segments?.[0]?.roomType || '';
+  switch (code) {
+    case 'STANDARD': return 'Phòng Tiêu Chuẩn (Standard)';
+    case 'SUPERIOR': return 'Phòng Cao Cấp (Superior)';
+    case 'DELUXE': return 'Phòng Sang Trọng (Deluxe)';
+    case 'SUITE': return 'Phòng Thượng Hạng (Suite)';
+    default: return code || 'Phòng nghỉ';
+  }
+};
+
+const getRoomNumber = (b) => {
+  if (!b) return 'Đang xếp phòng';
+  const seg = b.segments?.[0];
+  if (seg?.roomNumber) {
+    return `Phòng ${seg.roomNumber}` + (seg.floor ? ` (Tầng ${seg.floor})` : '');
+  }
+  return b.room_number ? `Phòng ${b.room_number}` : 'Đang xếp phòng';
+};
+
 const formatCountdown = (secs) => {
   if (secs <= 0) return '00:00';
   const m = Math.floor(secs / 60);
@@ -134,10 +163,14 @@ const loadBooking = async () => {
     booking.value = res;
 
     if (booking.value.hold_expires_at) {
-      const expires = new Date(booking.value.hold_expires_at).getTime();
+      let str = String(booking.value.hold_expires_at).trim();
+      if (!str.endsWith('Z') && !str.includes('+')) {
+        str += 'Z';
+      }
+      const expires = new Date(str).getTime();
       const now = new Date().getTime();
-      const diff = Math.max(0, Math.floor((expires - now) / 1000));
-      remainingSeconds.value = diff;
+      const diff = Math.floor((expires - now) / 1000);
+      remainingSeconds.value = Math.max(0, diff);
     }
 
     timer = setInterval(() => {

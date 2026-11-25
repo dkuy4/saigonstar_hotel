@@ -24,9 +24,15 @@
     "checkoutDate": "Check-out Date",
     "checkinTime": "Check-in Time",
     "checkoutTime": "Check-out Time",
+    "step15m": "15-min step",
+    "hourlyDate": "Rental Date",
     "durationHours": "Duration (Hours)",
     "guests": "Guests",
     "guestsCount": "{count} guests",
+    "maxGuests": "Max",
+    "hourlyNote": "Hourly stay is only applicable for {rank} room type (24/7 check-in, 1-24 hours; from 6+ hours capped at 1 daily rate).",
+    "hourCount": "{count} hours",
+    "dailyCap": "Daily capped: {price}",
     "searchButton": "Search Rooms",
     "modifySearch": "Modify Search",
     "resultsTitle": "Available Rooms",
@@ -63,7 +69,7 @@
     "HOURLY_NOT_ALLOWED": "Hourly booking is only available for Standard rooms (AC-05)",
     "NO_AVAILABILITY": "No rooms available for the selected period",
     "ROOM_CONFLICT": "Room is already booked during this time interval",
-    "PENDING_LIMIT_EXCEEDED": "Pending bookings limit exceeded (BR-21)",
+    "PENDING_LIMIT_EXCEEDED": "You have reached the maximum allowed unpaid reservations",
     "HOLD_EXPIRED": "Holding time has expired",
     "BOOKING_STATE_INVALID": "Invalid booking state for this action",
     "CANCEL_NOT_ALLOWED": "Cancellation is not allowed for this booking",
@@ -97,6 +103,22 @@
     "delete": "Delete",
     "loading": "Loading data...",
     "search": "Search",
-    "actions": "Actions"
+    "actions": "Actions",
+    "close": "Close"
+  },
+  "home": {
+    "badge": "INTERNATIONAL STANDARD RESORT & HOTEL",
+    "showcaseTitle": "Room Types & Standard Rates",
+    "showcaseSubtitle": "Public rates include service charge, excluding 8% VAT",
+    "hourlyAllowed": "Hourly available",
+    "capacity": "Capacity: {count} guests",
+    "dailyPrice": "Daily rate",
+    "hourlyPrice": "Hourly rate",
+    "perNight": " / night",
+    "perHour": " / hour"
+  },
+  "footer": {
+    "copyright": "© 2026 {name}. All rights reserved.",
+    "tagline": "Premium hospitality standards - 24/7 front desk service"
   }
 }

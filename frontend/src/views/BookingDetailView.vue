@@ -4,15 +4,27 @@
     <div v-if="!booking || isLookupRoute" class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4">
       <div class="text-center max-w-lg mx-auto space-y-1">
         <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mx-auto mb-2">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <Search class="w-6 h-6 text-sky-600" />
         </div>
         <h2 class="text-2xl font-bold text-slate-900">Tra cứu đơn đặt phòng</h2>
         <p class="text-xs text-slate-500">Vui lòng cung cấp mã đơn (ví dụ: DP0006053) và email đăng ký để bảo mật thông tin lưu trú</p>
       </div>
 
-      <form @submit.prevent="handleLookup" class="max-w-md mx-auto space-y-3 pt-2">
+      <!-- Embedded Alerts inside Lookup Form Card -->
+      <div v-if="errorMessage" class="max-w-md mx-auto p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center space-x-3">
+        <AlertCircle class="w-5 h-5 text-rose-600 flex-shrink-0" />
+        <span class="font-medium leading-relaxed">{{ errorMessage }}</span>
+      </div>
+
+      <div v-if="successMessage" class="max-w-md mx-auto p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <CheckCircle2 class="w-5 h-5 text-emerald-600 flex-shrink-0" />
+          <span class="font-medium leading-relaxed">{{ successMessage }}</span>
+        </div>
+        <button @click="successMessage = ''" class="text-emerald-700 hover:text-emerald-900 font-bold ml-2">Đóng</button>
+      </div>
+
+      <form @submit.prevent="handleLookup" class="max-w-md mx-auto space-y-4 pt-1">
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Mã đơn đặt phòng</label>
           <input
@@ -20,7 +32,7 @@
             type="text"
             required
             placeholder="DP0000001"
-            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-mono uppercase focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+            class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono uppercase text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
           />
         </div>
         <div>
@@ -30,7 +42,7 @@
             type="email"
             required
             placeholder="guest@example.com"
-            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+            class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
           />
         </div>
 
@@ -45,19 +57,19 @@
       </form>
     </div>
 
-    <!-- Error Alert -->
-    <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-sm flex items-center space-x-3">
-      <span class="text-lg">⚠️</span>
-      <span class="text-xs font-medium">{{ errorMessage }}</span>
+    <!-- Error Alert when booking is loaded but action fails -->
+    <div v-if="booking && !isLookupRoute && errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center space-x-3">
+      <AlertCircle class="w-5 h-5 text-rose-600 flex-shrink-0" />
+      <span class="font-medium leading-relaxed">{{ errorMessage }}</span>
     </div>
 
-    <!-- Success Message Alert -->
-    <div v-if="successMessage" class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm flex items-center justify-between">
+    <!-- Success Message Alert when booking is loaded -->
+    <div v-if="booking && !isLookupRoute && successMessage" class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <span class="text-lg">✅</span>
-        <span class="text-xs font-medium">{{ successMessage }}</span>
+        <CheckCircle2 class="w-5 h-5 text-emerald-600 flex-shrink-0" />
+        <span class="font-medium leading-relaxed">{{ successMessage }}</span>
       </div>
-      <button @click="successMessage = ''" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold">Đóng</button>
+      <button @click="successMessage = ''" class="text-emerald-700 hover:text-emerald-900 font-bold ml-2">Đóng</button>
     </div>
 
     <!-- Booking Details Card -->
@@ -67,7 +79,7 @@
         <div>
           <span class="text-xs uppercase tracking-wide font-semibold text-slate-400">Mã đơn đặt phòng</span>
           <h3 class="text-3xl font-black font-mono text-slate-900 mt-0.5">{{ booking.booking_code }}</h3>
-          <p class="text-xs text-slate-500 mt-0.5">Đặt qua kênh: <strong class="text-slate-700">{{ booking.channel }}</strong></p>
+          <p class="text-xs text-slate-500 mt-0.5">Hình thức: <strong class="text-slate-700">{{ booking.channel === 'WEB' ? 'Đặt phòng trực tuyến' : 'Đặt trực tiếp tại quầy' }}</strong></p>
         </div>
         <div class="flex items-center space-x-3">
           <StatusBadge :status="booking.status" />
@@ -106,7 +118,10 @@
           <span class="font-bold text-slate-700 block uppercase text-[10px] tracking-wider border-b border-slate-200 pb-1.5">
             Thông tin lưu trú
           </span>
-          <div class="text-sm font-bold text-sky-600">Hạng {{ booking.room_type }}</div>
+          <div class="text-sm font-bold text-sky-600">{{ getRoomTypeLabel(booking) }}</div>
+          <div v-if="getRoomNumber(booking)" class="text-slate-600">
+            Số phòng xếp: <span class="font-bold text-slate-900 bg-sky-50 text-sky-800 px-2 py-0.5 rounded-lg border border-sky-100">Phòng {{ getRoomNumber(booking) }}</span>
+          </div>
           <div class="text-slate-600">Số khách: <span class="font-medium text-slate-800">{{ booking.guests }} người</span></div>
           <div class="text-slate-600">Nhận phòng: <strong class="text-slate-900">{{ formatDateTime(booking.checkin) }}</strong></div>
           <div class="text-slate-600">Trả phòng: <strong class="text-slate-900">{{ formatDateTime(booking.checkout) }}</strong></div>
@@ -126,7 +141,7 @@
         <div class="pt-3 border-t border-slate-100 flex justify-between items-baseline">
           <div>
             <span class="font-bold text-slate-800 text-sm">Tổng thanh toán:</span>
-            <span class="text-[10px] text-slate-400 block">Đã gồm thuế VAT & phí dịch vụ (BR-59)</span>
+            <span class="text-[10px] text-slate-400 block">Đã bao gồm thuế VAT & phí dịch vụ</span>
           </div>
           <div class="text-2xl font-black text-sky-600">
             <MoneyText :amount="booking.total_amount" />
@@ -136,7 +151,7 @@
 
       <!-- Policy Reminder (BR-24) -->
       <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-900 space-y-1">
-        <div class="font-bold uppercase text-[10px] tracking-wider text-blue-700">Chính sách hủy & đổi phòng (BR-24, BR-27)</div>
+        <div class="font-bold uppercase text-[10px] tracking-wider text-blue-700">Chính sách hủy & đổi phòng</div>
         <p class="text-blue-800 leading-relaxed">
           Quý khách được hoàn tiền 100% nếu hủy trước 24 giờ so với thời điểm nhận phòng. Hủy dưới 24 giờ không hoàn tiền.
           Đổi ngày lưu trú cùng hạng phòng được giữ nguyên đơn giá đã chốt.
@@ -172,10 +187,12 @@
       <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-fade-in">
         <div class="flex items-center justify-between border-b pb-3">
           <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
-            <span class="text-rose-600">⚠️</span>
+            <AlertCircle class="w-5 h-5 text-rose-600 flex-shrink-0" />
             <span>Xác nhận hủy đơn đặt phòng</span>
           </h3>
-          <button @click="showCancelModal = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          <button @click="showCancelModal = false" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+            <X class="w-4 h-4" />
+          </button>
         </div>
 
         <div v-if="loadingPreview" class="py-8 text-center text-slate-500 text-xs">
@@ -233,10 +250,12 @@
       <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-fade-in">
         <div class="flex items-center justify-between border-b pb-3">
           <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
-            <span class="text-indigo-600">📅</span>
+            <Calendar class="w-5 h-5 text-indigo-600 flex-shrink-0" />
             <span>Đổi lịch / Hạng phòng</span>
           </h3>
-          <button @click="showRescheduleModal = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          <button @click="showRescheduleModal = false" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+            <X class="w-4 h-4" />
+          </button>
         </div>
 
         <form @submit.prevent="confirmRescheduleBooking" class="space-y-4 text-xs">
@@ -273,7 +292,7 @@
               <option value="SUITE">Suite (Tổng thống)</option>
             </select>
             <p class="text-[11px] text-slate-400 mt-1">
-              Đổi cùng hạng giữ nguyên đơn giá cũ (D-29). Đổi sang hạng khác tính theo giá hiện hành.
+              Đổi cùng hạng giữ nguyên đơn giá cũ. Đổi sang hạng khác tính theo giá hiện hành.
             </p>
           </div>
 
@@ -307,6 +326,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { AlertCircle, CheckCircle2, Calendar, X, Search } from 'lucide-vue-next';
 import apiClient from '../api/client';
 import StatusBadge from '../components/StatusBadge.vue';
 import MoneyText from '../components/MoneyText.vue';
@@ -344,6 +364,23 @@ const formatDateTime = (iso) => {
     day: '2-digit', month: '2-digit', year: 'numeric',
     hour: '2-digit', minute: '2-digit'
   });
+};
+
+const getRoomTypeLabel = (b) => {
+  if (!b) return '';
+  const code = b.room_type || b.segments?.[0]?.roomType || '';
+  switch (code) {
+    case 'STANDARD': return 'Phòng Tiêu Chuẩn (Standard)';
+    case 'SUPERIOR': return 'Phòng Cao Cấp (Superior)';
+    case 'DELUXE': return 'Phòng Sang Trọng (Deluxe)';
+    case 'SUITE': return 'Phòng Thượng Hạng (Suite)';
+    default: return code ? `Hạng ${code}` : 'Phòng nghỉ';
+  }
+};
+
+const getRoomNumber = (b) => {
+  if (!b) return null;
+  return b.room_number || b.segments?.[0]?.room_number || b.segments?.[0]?.roomNumber || null;
 };
 
 const handleLookup = async () => {

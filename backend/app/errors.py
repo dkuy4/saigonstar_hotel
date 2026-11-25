@@ -3,6 +3,7 @@ import logging
 from typing import Optional, Any
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 import oracledb
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,7 @@ ERROR_STATUS_MAP: dict[str, int] = {
     
     # 403 Forbidden
     "AUTH_ACCOUNT_LOCKED": status.HTTP_403_FORBIDDEN,
+    "PASSWORD_CHANGE_REQUIRED": status.HTTP_403_FORBIDDEN,
     "FORBIDDEN": status.HTTP_403_FORBIDDEN,
     "AUDIT_IMMUTABLE": status.HTTP_403_FORBIDDEN,
     
@@ -29,8 +31,13 @@ ERROR_STATUS_MAP: dict[str, int] = {
     "NOT_FOUND": status.HTTP_404_NOT_FOUND,
     
     # 409 Conflict
+    "LAST_MANAGER": status.HTTP_409_CONFLICT,
+    "SELF_LOCK_NOT_ALLOWED": status.HTTP_409_CONFLICT,
+    "SELF_ROLE_CHANGE_NOT_ALLOWED": status.HTTP_409_CONFLICT,
+    "USERNAME_EXISTS": status.HTTP_409_CONFLICT,
     "NO_AVAILABILITY": status.HTTP_409_CONFLICT,
     "ROOM_CONFLICT": status.HTTP_409_CONFLICT,
+    "ROOM_HAS_BOOKINGS": status.HTTP_409_CONFLICT,
     "PENDING_LIMIT_EXCEEDED": status.HTTP_409_CONFLICT,
     "BOOKING_STATE_INVALID": status.HTTP_409_CONFLICT,
     "CANCEL_NOT_ALLOWED": status.HTTP_409_CONFLICT,
@@ -54,6 +61,7 @@ ERROR_STATUS_MAP: dict[str, int] = {
     "PRICE_RULE_VIOLATION": 422,
     "PRICE_OVERLAP": 422,
     "CONFIG_OVERLAP": 422,
+    "INVALID_SETTING": 422,
     
     # 429 Too Many Requests
     "RATE_LIMITED": status.HTTP_429_TOO_MANY_REQUESTS,
@@ -111,5 +119,5 @@ def create_error_response(code: str, detail: Optional[str] = None, http_status: 
         "detail": detail or ""
     }
     if data is not None:
-        content["data"] = data
+        content["data"] = jsonable_encoder(data)
     return JSONResponse(status_code=status_code, content=content)

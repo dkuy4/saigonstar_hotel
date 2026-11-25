@@ -24,9 +24,15 @@
     "checkoutDate": "Ngày trả phòng",
     "checkinTime": "Giờ nhận",
     "checkoutTime": "Giờ trả",
+    "step15m": "Bước 15p",
+    "hourlyDate": "Ngày thuê",
     "durationHours": "Số giờ thuê",
     "guests": "Số khách",
     "guestsCount": "{count} khách",
+    "maxGuests": "Tối đa",
+    "hourlyNote": "Thuê theo giờ chỉ áp dụng cho hạng {rank} (nhận 24/24, từ 1–24 giờ; từ 6 giờ trở lên tính trần 1 giá ngày).",
+    "hourCount": "{count} giờ",
+    "dailyCap": "Giá trần ngày: {price}",
     "searchButton": "Tìm phòng ngay",
     "modifySearch": "Thay đổi điều kiện tìm",
     "resultsTitle": "Kết quả tìm phòng",
@@ -63,7 +69,7 @@
     "HOURLY_NOT_ALLOWED": "Thuê theo giờ chỉ áp dụng cho hạng phòng Standard (AC-05)",
     "NO_AVAILABILITY": "Đã hết phòng trong khoảng thời gian này",
     "ROOM_CONFLICT": "Phòng đã có người đặt trong khoảng thời gian đã chọn",
-    "PENDING_LIMIT_EXCEEDED": "Đã vượt quá số lượng đơn chưa thanh toán cho phép (BR-21)",
+    "PENDING_LIMIT_EXCEEDED": "Quý khách đã vượt quá số lượng 3 đơn chưa thanh toán cho phép. Vui lòng hoàn tất đơn trước đó.",
     "HOLD_EXPIRED": "Thời gian giữ chỗ thanh toán trực tuyến đã hết hạn",
     "BOOKING_STATE_INVALID": "Trạng thái đơn không hợp lệ cho thao tác này",
     "CANCEL_NOT_ALLOWED": "Không thể hủy đơn đặt phòng ở trạng thái này",
@@ -97,6 +103,22 @@
     "delete": "Xóa",
     "loading": "Đang tải dữ liệu...",
     "search": "Tìm kiếm",
-    "actions": "Thao tác"
+    "actions": "Thao tác",
+    "close": "Đóng"
+  },
+  "home": {
+    "badge": "KHÁCH SẠN NGHỈ DƯỠNG TIÊU CHUẨN QUỐC TẾ",
+    "showcaseTitle": "Hạng phòng & Bảng giá niêm yết",
+    "showcaseSubtitle": "Giá công bố đã bao gồm phí dịch vụ, chưa bao gồm thuế VAT 8%",
+    "hourlyAllowed": "Có thuê giờ",
+    "capacity": "Sức chứa: {count} khách",
+    "dailyPrice": "Giá theo ngày",
+    "hourlyPrice": "Giá theo giờ",
+    "perNight": " / đêm",
+    "perHour": " / giờ"
+  },
+  "footer": {
+    "copyright": "© 2026 {name}. Toàn bộ quyền được bảo lưu.",
+    "tagline": "Tiêu chuẩn nghỉ dưỡng cao cấp - Dịch vụ lễ tân phục vụ 24/7"
   }
 }

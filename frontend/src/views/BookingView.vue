@@ -12,7 +12,7 @@
 
     <!-- Error Banner -->
     <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-sm flex items-start space-x-3">
-      <span class="text-lg">⚠️</span>
+      <AlertCircle class="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
       <div class="flex-1">
         <p class="font-semibold">{{ errorTitle }}</p>
         <p class="text-xs mt-0.5">{{ errorMessage }}</p>
@@ -26,7 +26,7 @@
           <!-- Customer Info Card -->
           <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
             <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span>👤</span>
+              <User class="w-4 h-4 text-sky-600" />
               <span>Thông tin khách lưu trú</span>
             </h3>
 
@@ -93,10 +93,81 @@
             </div>
           </div>
 
+          <!-- Room Selection Card (Chọn số phòng mong muốn) -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                <DoorOpen class="w-4 h-4 text-sky-600" />
+                <span>Chọn số phòng mong muốn</span>
+              </h3>
+              <span class="text-xs text-slate-400 font-normal">Tùy chọn</span>
+            </div>
+            
+            <p class="text-xs text-slate-500">
+              Quý khách có thể chọn căn phòng ưng ý trước hoặc để khách sạn tự động lựa chọn phòng tốt nhất.
+            </p>
+
+            <!-- Loading rooms -->
+            <div v-if="loadingRooms" class="py-4 text-center text-xs text-slate-400 flex items-center justify-center space-x-2">
+              <div class="animate-spin rounded-full h-3.5 w-3.5 border-2 border-sky-600 border-t-transparent"></div>
+              <span>Đang kiểm tra danh sách phòng còn trống...</span>
+            </div>
+
+            <!-- Room selection list -->
+            <div v-else class="space-y-3">
+              <!-- Default Option: Auto Assign -->
+              <label
+                class="flex items-center justify-between p-3.5 border rounded-xl cursor-pointer transition"
+                :class="selectedRoomId === null ? 'border-sky-500 bg-sky-50/50 ring-1 ring-sky-500' : 'border-slate-200 hover:bg-slate-50'"
+              >
+                <div class="flex items-center space-x-3">
+                  <input
+                    type="radio"
+                    :checked="selectedRoomId === null"
+                    @change="selectedRoomId = null"
+                    class="text-sky-600 focus:ring-sky-500 h-4 w-4"
+                  />
+                  <div>
+                    <span class="text-xs font-semibold text-slate-800">Tự động sắp xếp phòng</span>
+                    <p class="text-[11px] text-slate-500">Khách sạn sẽ ưu tiên chọn phòng yên tĩnh và tối ưu nhất cho quý khách</p>
+                  </div>
+                </div>
+                <Sparkles class="w-4 h-4 text-amber-500" />
+              </label>
+
+              <!-- Custom Room Pick Option -->
+              <div v-if="availableRooms.length > 0" class="pt-2">
+                <p class="text-xs font-semibold text-slate-700 mb-2">
+                  Hoặc chọn trực tiếp phòng trống bên dưới ({{ availableRooms.length }} phòng sẵn sàng):
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 max-h-56 overflow-y-auto p-1">
+                  <button
+                    v-for="r in availableRooms"
+                    :key="r.room_id"
+                    type="button"
+                    @click="selectedRoomId = (selectedRoomId === r.room_id ? null : r.room_id)"
+                    class="p-2.5 rounded-xl border text-left transition flex flex-col justify-between"
+                    :class="selectedRoomId === r.room_id ? 'border-sky-600 bg-sky-50/80 ring-2 ring-sky-500 text-sky-900 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-slate-50/60 text-slate-700'"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-xs">Phòng {{ r.room_number }}</span>
+                      <CheckCircle2 v-if="selectedRoomId === r.room_id" class="w-3.5 h-3.5 text-sky-600" />
+                    </div>
+                    <span class="text-[10px] text-slate-500 mt-1">Tầng {{ r.floor }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div v-else class="text-xs text-slate-400 italic">
+                Tất cả phòng trống cùng hạng sẽ được phân bổ tự động khi quý khách hoàn tất đơn.
+              </div>
+            </div>
+          </div>
+
           <!-- Payment Options Card -->
           <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
             <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span>💳</span>
+              <CreditCard class="w-4 h-4 text-sky-600" />
               <span>Phương thức thanh toán</span>
             </h3>
 
@@ -115,7 +186,7 @@
                 <div class="ml-3">
                   <div class="font-semibold text-sm text-slate-900">Thanh toán trực tuyến (Thẻ ATM / Visa / QR Pay)</div>
                   <p class="text-xs text-slate-500 mt-0.5">
-                    Hệ thống sẽ giữ chỗ phòng trong <strong>15 phút</strong> để quý khách hoàn tất giao dịch qua cổng thanh toán (BR-17).
+                    Hệ thống sẽ giữ chỗ phòng trong <strong>15 phút</strong> để quý khách hoàn tất giao dịch thanh toán trực tuyến an toàn.
                   </p>
                 </div>
               </label>
@@ -134,7 +205,7 @@
                 <div class="ml-3">
                   <div class="font-semibold text-sm text-slate-900">Thanh toán khi nhận phòng tại quầy</div>
                   <p class="text-xs text-slate-500 mt-0.5">
-                    Xác nhận đơn ngay lập tức. Quý khách thanh toán bằng tiền mặt hoặc thẻ khi đến làm thủ tục check-in. Tối đa 3 đơn chưa thanh toán (BR-21).
+                    Xác nhận đơn ngay lập tức. Quý khách thanh toán bằng tiền mặt hoặc thẻ khi đến nhận phòng tại khách sạn. Mỗi khách hàng được giữ tối đa 3 đơn chưa thanh toán.
                   </p>
                 </div>
               </label>
@@ -154,7 +225,7 @@
               <label for="agree-checkbox" class="ml-3 text-xs text-slate-700 leading-relaxed cursor-pointer">
                 Tôi xác nhận đã đọc và đồng ý với
                 <button type="button" @click="showPolicyModal = true" class="text-sky-600 underline font-medium hover:text-sky-800">
-                  Chính sách hủy phòng và Quy định vắng mặt (no-show)
+                  Chính sách hủy phòng và Quy định nhận phòng
                 </button>
                 của khách sạn Sài Gòn Star. <span class="text-rose-500">*</span>
               </label>
@@ -196,6 +267,13 @@
               <span class="font-medium text-slate-800">{{ guests }} người</span>
             </div>
 
+            <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+              <span class="text-slate-500">Số phòng chọn:</span>
+              <span class="font-semibold text-xs text-sky-700">
+                {{ selectedRoomNumber ? `Phòng ${selectedRoomNumber}` : 'Tự động sắp xếp' }}
+              </span>
+            </div>
+
             <div class="pt-2 border-t border-slate-100 space-y-2">
               <div>
                 <span class="text-slate-400 block text-[10px] uppercase">Nhận phòng:</span>
@@ -221,7 +299,7 @@
             <div class="pt-3 border-t border-slate-100 flex justify-between items-baseline">
               <div>
                 <span class="text-xs uppercase font-bold text-slate-700 block">Tổng thanh toán:</span>
-                <span class="text-[10px] text-slate-400">Đã bao gồm VAT 8% (BR-59)</span>
+                <span class="text-[10px] text-slate-400">Đã bao gồm thuế VAT 8%</span>
               </div>
               <div class="text-xl font-black text-sky-600">
                 <MoneyText :value="priceInfo.total_amount" currency="VND" />
@@ -237,23 +315,25 @@
       <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
         <div class="flex items-center justify-between border-b pb-3">
           <h4 class="font-bold text-base text-slate-900">Chính sách hủy & vắng mặt</h4>
-          <button @click="showPolicyModal = false" class="text-slate-400 hover:text-slate-700 text-lg font-bold">✕</button>
+          <button @click="showPolicyModal = false" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+            <X class="w-4 h-4" />
+          </button>
         </div>
 
         <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
-          <p class="font-semibold text-slate-800">1. Chính sách hủy phòng (BR-24)</p>
+          <p class="font-semibold text-slate-800">1. Chính sách hủy phòng</p>
           <ul class="list-disc pl-4 space-y-1">
             <li>Hủy trước 24 giờ so với giờ nhận phòng: Hoàn trả 100% số tiền đã thanh toán (bao gồm cả thuế VAT).</li>
             <li>Hủy trong vòng 24 giờ: Phí hủy bằng 100% tiền phòng của đêm lưu trú đầu tiên.</li>
           </ul>
 
-          <p class="font-semibold text-slate-800">2. Quy định vắng mặt / No-show (BR-27, BR-28)</p>
+          <p class="font-semibold text-slate-800">2. Quy định khi quý khách không đến nhận phòng</p>
           <ul class="list-disc pl-4 space-y-1">
             <li>Đơn chưa thanh toán: Nếu khách không nhận phòng sau 2 giờ (với đơn ngày) hoặc 30 phút (với đơn giờ), hệ thống tự động giải phóng phòng.</li>
             <li>Đơn đã thanh toán: Khách sạn giữ phòng cho quý khách đến 12:00 ngày hôm sau (đơn ngày) hoặc đến hết khung giờ thuê (đơn giờ).</li>
           </ul>
 
-          <p class="font-semibold text-slate-800">3. Giữ chỗ trực tuyến (BR-17)</p>
+          <p class="font-semibold text-slate-800">3. Thời gian giữ phòng trực tuyến</p>
           <p>Thời hạn giữ chỗ tối đa là 15 phút. Nếu quá hạn chưa hoàn tất thanh toán, hệ thống sẽ tự động hủy đơn và mở phòng cho khách hàng khác.</p>
         </div>
 
@@ -274,12 +354,15 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { AlertCircle, User, CreditCard, X, DoorOpen, Sparkles, CheckCircle2 } from 'lucide-vue-next';
 import apiClient from '../api/client';
 import MoneyText from '../components/MoneyText.vue';
+import { useGuestAuthStore } from '../stores/guestAuth';
 
 const { t, locale } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const guestAuth = useGuestAuthStore();
 
 const stayType = computed(() => route.query.type || 'NGAY');
 const roomType = computed(() => route.query.room_type || 'STANDARD');
@@ -288,9 +371,9 @@ const checkout = computed(() => route.query.checkout || '');
 const guests = computed(() => Number(route.query.guests || 2));
 
 const customer = ref({
-  fullName: '',
-  phone: '',
-  email: '',
+  fullName: guestAuth.isLoggedIn ? guestAuth.guestName : '',
+  phone: guestAuth.isLoggedIn ? guestAuth.guestPhone : '',
+  email: guestAuth.isLoggedIn ? guestAuth.guestEmail : '',
   nationality: 'VN'
 });
 
@@ -301,6 +384,36 @@ const loading = ref(false);
 const errorMessage = ref('');
 const errorTitle = ref('');
 const priceInfo = ref(null);
+
+const availableRooms = ref([]);
+const selectedRoomId = ref(null);
+const loadingRooms = ref(false);
+
+const selectedRoomNumber = computed(() => {
+  if (!selectedRoomId.value) return null;
+  const found = availableRooms.value.find(r => r.room_id === selectedRoomId.value);
+  return found ? found.room_number : null;
+});
+
+const loadAvailableRooms = async () => {
+  if (!checkin.value || !checkout.value || !roomType.value) return;
+  loadingRooms.value = true;
+  try {
+    const res = await apiClient.get('/availability/rooms', {
+      params: {
+        roomType: roomType.value,
+        checkin: checkin.value,
+        checkout: checkout.value
+      }
+    });
+    availableRooms.value = res.rooms || res.data?.rooms || [];
+  } catch (err) {
+    console.error('Không thể tải danh sách phòng khả dụng:', err);
+    availableRooms.value = [];
+  } finally {
+    loadingRooms.value = false;
+  }
+};
 
 const isFormValid = computed(() => {
   return (
@@ -362,6 +475,7 @@ const handleBooking = async () => {
     const payload = {
       loaiDat: stayType.value,
       maHang: roomType.value,
+      phongId: selectedRoomId.value || null,
       nhanLuc: checkin.value,
       traLuc: checkout.value,
       soKhach: guests.value,
@@ -402,5 +516,8 @@ const handleBooking = async () => {
   }
 };
 
-onMounted(loadPriceInfo);
+onMounted(() => {
+  loadPriceInfo();
+  loadAvailableRooms();
+});
 </script>

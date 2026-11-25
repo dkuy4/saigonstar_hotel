@@ -306,6 +306,46 @@ class BookingRepository:
             }
 
     @staticmethod
+    def mark_no_show(conn: oracledb.Connection, booking_id: int) -> Dict[str, Any]:
+        with conn.cursor() as cur:
+            try:
+                cur.callproc("PKG_DAT_PHONG.NO_SHOW_THU_CONG", [booking_id])
+            except oracledb.DatabaseError as e:
+                raise parse_oracle_error(e)
+
+            cur.execute("SELECT ma_tra_cuu, trang_thai FROM dat_phong WHERE dat_phong_id = :id", {"id": booking_id})
+            row = cur.fetchone()
+            b_code = row[0] if row else ""
+            new_st = row[1] if row else "NO_SHOW"
+            return {
+                "status": "success",
+                "booking_id": booking_id,
+                "booking_code": b_code,
+                "new_status": new_st,
+                "message": "Đã chuyển đơn sang trạng thái NO_SHOW (khách không đến) thành công."
+            }
+
+    @staticmethod
+    def resend_email(conn: oracledb.Connection, booking_id: int) -> Dict[str, Any]:
+        with conn.cursor() as cur:
+            cur.execute("SELECT ma_tra_cuu FROM dat_phong WHERE dat_phong_id = :id", {"id": booking_id})
+            row = cur.fetchone()
+            if not row:
+                raise BusinessException("BOOKING_NOT_FOUND", f"Không tìm thấy đơn đặt phòng ID {booking_id}")
+            b_code = row[0]
+            try:
+                cur.callproc("PKG_EMAIL.XEP", [booking_id, "XAC_NHAN"])
+            except oracledb.DatabaseError as e:
+                raise parse_oracle_error(e)
+
+            return {
+                "status": "success",
+                "booking_id": booking_id,
+                "booking_code": b_code,
+                "message": "Đã xếp email xác nhận vào hàng đợi gửi thành công (FR-23)."
+            }
+
+    @staticmethod
     def reschedule_booking(
         conn: oracledb.Connection,
         booking_id: int,
@@ -633,6 +673,28 @@ class BookingRepository:
                     "createdBy": inv["nguoi_lap"]
                 }
 
+            # Email queue logs (F14, FR-23, FR-53)
+            cur.execute("""
+                SELECT email_id, loai_email, ngon_ngu, trang_thai, so_lan_thu, lan_gui_cuoi, loi, ngay_tao
+                  FROM hang_doi_email
+                 WHERE dat_phong_id = :id
+                 ORDER BY email_id DESC
+            """, {"id": dp_id})
+            email_rows = fetch_cursor_as_dicts(cur)
+            emails = [
+                {
+                    "emailId": e["email_id"],
+                    "emailType": e["loai_email"],
+                    "language": e["ngon_ngu"],
+                    "status": e["trang_thai"],
+                    "attempts": int(e["so_lan_thu"] or 0),
+                    "lastSentAt": e["lan_gui_cuoi"],
+                    "error": e["loi"],
+                    "createdAt": e["ngay_tao"]
+                }
+                for e in email_rows
+            ]
+
             # Guest identification document (NFR-13)
             doc_id = None
             id_type = None
@@ -672,10 +734,16 @@ class BookingRepository:
                 "can_pay": st in ("HOLD", "CONFIRMED", "CHECKED_IN") and rem > 0
             }
 
+            room_type = segments[0]["roomType"] if segments else None
+            hold_exp = dp["han_giu_cho"]
+            if hold_exp is not None and hasattr(hold_exp, "tzinfo") and hold_exp.tzinfo is None:
+                hold_exp = hold_exp.replace(tzinfo=timezone.utc)
+
             return {
                 "id": dp_id,
                 "booking_code": dp["ma_tra_cuu"],
                 "status": st,
+                "room_type": room_type,
                 "booking_type": dp["loai_dat"],
                 "channel": dp["kenh_dat"],
                 "checkin": dp["tu_luc"],
@@ -683,7 +751,7 @@ class BookingRepository:
                 "actual_checkin": dp["nhan_thuc_te"],
                 "actual_checkout": dp["tra_thuc_te"],
                 "guests": dp["so_khach"],
-                "hold_expires_at": dp["han_giu_cho"],
+                "hold_expires_at": hold_exp,
                 "room_amount": float(dp["tien_phong"] or 0),
                 "vat_rate": float(dp["thue_suat"] or 0),
                 "vat_amount": float(dp["tien_vat"] or 0),
@@ -704,6 +772,7 @@ class BookingRepository:
                 "transactions": transactions,
                 "refunds": refunds,
                 "invoice": invoice,
+                "emails": emails,
                 "actions": actions
             }
 

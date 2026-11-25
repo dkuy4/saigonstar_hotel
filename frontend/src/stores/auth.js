@@ -3,8 +3,8 @@ import i18n from '../i18n';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: sessionStorage.getItem('hotel_token') || '',
-    user: JSON.parse(sessionStorage.getItem('hotel_user') || 'null'),
+    token: localStorage.getItem('hotel_token') || sessionStorage.getItem('hotel_token') || '',
+    user: JSON.parse(localStorage.getItem('hotel_user') || sessionStorage.getItem('hotel_user') || 'null'),
     language: localStorage.getItem('hotel_lang') || 'vi'
   }),
   getters: {
@@ -19,12 +19,16 @@ export const useAuthStore = defineStore('auth', {
     setAuth(token, user) {
       this.token = token;
       this.user = user;
+      localStorage.setItem('hotel_token', token);
+      localStorage.setItem('hotel_user', JSON.stringify(user));
       sessionStorage.setItem('hotel_token', token);
       sessionStorage.setItem('hotel_user', JSON.stringify(user));
     },
     logout() {
       this.token = '';
       this.user = null;
+      localStorage.removeItem('hotel_token');
+      localStorage.removeItem('hotel_user');
       sessionStorage.removeItem('hotel_token');
       sessionStorage.removeItem('hotel_user');
     },
@@ -32,6 +36,13 @@ export const useAuthStore = defineStore('auth', {
       this.language = lang;
       localStorage.setItem('hotel_lang', lang);
       i18n.global.locale.value = lang;
+    },
+    clearMustChangePassword() {
+      if (this.user) {
+        this.user.phaiDoiMatKhau = false;
+        localStorage.setItem('hotel_user', JSON.stringify(this.user));
+        sessionStorage.setItem('hotel_user', JSON.stringify(this.user));
+      }
     }
   }
 });
