@@ -1021,11 +1021,19 @@
         </div>
       </div>
     </div>
+    <!-- Change Room Incident Modal (F10) -->
+    <ChangeRoomDialog
+      v-if="booking"
+      v-model="showChangeRoomModal"
+      :booking-id="booking.id"
+      :current-room-number="currentRoomNumber"
+      @success="handleChangeRoomSuccess"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   RefreshCw, ArrowLeft, AlertCircle, CheckCircle2,
@@ -1034,6 +1042,7 @@ import {
 } from 'lucide-vue-next';
 import apiClient from '../../api/client';
 import StatusBadge from '../../components/StatusBadge.vue';
+import ChangeRoomDialog from '../../components/ChangeRoomDialog.vue';
 
 const route = useRoute();
 const idParam = ref(route.params.id);
@@ -1224,8 +1233,23 @@ const handleExtend = async () => {
   }
 };
 
+// Change Room Modal (F10)
+const showChangeRoomModal = ref(false);
+
+const currentRoomNumber = computed(() => {
+  if (!booking.value?.segments?.length) return '';
+  const lastSeg = booking.value.segments[booking.value.segments.length - 1];
+  return lastSeg.room_number || lastSeg.roomNumber || '';
+});
+
 const openChangeRoomModal = () => {
-  alert('Mở hộp thoại đổi phòng sự cố (F10)');
+  showChangeRoomModal.value = true;
+};
+
+const handleChangeRoomSuccess = async (res) => {
+  const roomNum = res.new_room_number || res.newRoomNumber;
+  successMessage.value = `Đổi phòng do sự cố thành công! Đã chuyển khách sang phòng ${roomNum}, phòng cũ chuyển sang trạng thái bảo trì.`;
+  await fetchBooking();
 };
 
 const openCheckOutModal = () => {

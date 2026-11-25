@@ -26,7 +26,9 @@ from app.schemas.booking import (
     CheckInResponse,
     BookingExtendRequest,
     BookingExtendPreviewResponse,
-    BookingExtendResponse
+    BookingExtendResponse,
+    ChangeRoomRequest,
+    ChangeRoomResponse,
 )
 from app.repositories.booking_repo import BookingRepository
 from app.repositories.payment_repo import PaymentRepository
@@ -423,3 +425,61 @@ def resend_booking_email(
     return BookingResendEmailResponse(**res)
 
 
+
+@router.get(
+    "/{id}/suggested-rooms",
+    response_model=list,
+    summary="Danh sách phòng gợi ý để đổi phòng sự cố (F10, FR-18, BR-35)",
+)
+def get_suggested_rooms_for_change(
+    id: int,
+    user: AuthUser = Depends(require_role("LE_TAN", "QUAN_LY")),
+    conn: oracledb.Connection = Depends(get_conn),
+):
+    """
+    Returns available rooms (same or higher tier, free from now→checkout)
+    for the receptionist to choose when performing a room change on incident.
+    """
+    set_db_context(conn, nguoi_id=user.user_id, vai_tro=user.role, kenh="QUAY")
+    rooms = BookingRepository.get_suggested_rooms_for_change(conn=conn, booking_id=id)
+    return rooms
+
+
+@router.post(
+    "/{id}/change-room",
+    response_model=ChangeRoomResponse,
+    summary="Đổi phòng khi sự cố: phòng cũ sang BAO_TRI, phòng mới DANG_O, giá không đổi (F10, FR-18, BR-35, BR-36, AC-13)",
+)
+def change_room(
+    id: int,
+    payload: ChangeRoomRequest,
+    user: AuthUser = Depends(require_role("LE_TAN", "QUAN_LY")),
+    conn: oracledb.Connection = Depends(get_conn),
+):
+    """
+    Calls PKG_DAT_PHONG.DOI_PHONG_SU_CO(p_dat_phong_id, p_phong_moi_id, p_ly_do).
+
+    - Reason is mandatory (min 3 chars validated by Pydantic, also enforced by Oracle).
+    - Reason is set into session context via set_db_context(ly_do=...) so audit
+      triggers capture it in the log without the handler duplicating the commit.
+    - No commit in handler: get_conn dependency handles commit/rollback.
+    - Oracle errors flow through errors.py → parse_oracle_error.
+    - Response includes suggested_rooms from GOI_Y_PHONG for UI convenience.
+    """
+    # Pass reason into session context (PKG_NGU_CANH.DAT_LY_DO is called by the
+    # package itself, but we also set it here so the context is complete before
+    # any trigger fires during the DML inside DOI_PHONG_SU_CO).
+    set_db_context(
+        conn,
+        nguoi_id=user.user_id,
+        vai_tro=user.role,
+        kenh="QUAY",
+        ly_do=payload.reason,
+    )
+    result = BookingRepository.change_room(
+        conn=conn,
+        booking_id=id,
+        new_room_id=payload.new_room_id,
+        reason=payload.reason,
+    )
+    return ChangeRoomResponse(**result)
