@@ -128,7 +128,7 @@ const handleResetPassword = async () => {
   try {
     const res = await apiClient.post('/guest/reset-password', {
       email: email.value,
-      so_dien_thoai: phone.value,
+      sdt: phone.value,
       ho_ten: fullName.value,
       mat_khau_moi: newPassword.value
     });

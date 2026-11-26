@@ -102,7 +102,7 @@ const handleRegister = async () => {
   try {
     const res = await apiClient.post('/guest/register', {
       ho_ten: fullName.value,
-      so_dien_thoai: phone.value,
+      sdt: phone.value,
       email: email.value,
       mat_khau: password.value
     });
