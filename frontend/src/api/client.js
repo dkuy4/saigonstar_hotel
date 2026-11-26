@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
+import { useGuestAuthStore } from '../stores/guestAuth';
 import i18n from '../i18n';
 
 const apiClient = axios.create({
@@ -60,6 +61,13 @@ apiClient.interceptors.response.use(
     // Auto logout if 401 Unauthorized
     if (error.response?.status === 401) {
       authStore.logout();
+      try {
+        const guestAuthStore = useGuestAuthStore();
+        guestAuthStore.logout();
+      } catch (e) {
+        localStorage.removeItem('guest_token');
+        localStorage.removeItem('guest_user');
+      }
     }
 
     const data = error.response?.data;

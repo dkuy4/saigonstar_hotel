@@ -158,16 +158,20 @@ const loading = ref(false);
 const error = ref('');
 
 const fetchBookings = async () => {
+  const token = guestAuth.token || localStorage.getItem('guest_token');
+  if (!token) {
+    error.value = 'Phiên đăng nhập đã hết hạn. Quý khách vui lòng đăng nhập lại để xem chuyến đi.';
+    return;
+  }
   loading.value = true;
   error.value = '';
   try {
-    const token = guestAuth.token || localStorage.getItem('guest_token');
     const res = await apiClient.get('/guest/my-bookings', {
-      headers: token ? { Authorization: `Bearer ${token}` } : {}
+      headers: { Authorization: `Bearer ${token}` }
     });
     bookings.value = Array.isArray(res) ? res : (res?.data || []);
   } catch (err) {
-    error.value = err.response?.data?.detail || err.message || 'Không thể tải danh sách chuyến đi. Xin quý khách vui lòng thử lại.';
+    error.value = err.detail || err.message || 'Không thể tải danh sách chuyến đi. Xin quý khách vui lòng thử lại.';
   } finally {
     loading.value = false;
   }
