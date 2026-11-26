@@ -10,7 +10,7 @@
           </div>
           <div>
             <h1 class="font-display font-bold text-lg leading-tight tracking-tight text-stone-900 dark:text-white">SaigonStar</h1>
-            <p class="text-[11px] text-stone-500 dark:text-stone-400 font-normal">{{ t('app.subtitle') }}</p>
+            <p class="hidden sm:block text-[11px] text-stone-500 dark:text-stone-400 font-normal">{{ t('app.subtitle') }}</p>
           </div>
         </router-link>
 
@@ -107,6 +107,34 @@
           </template>
         </div>
       </div>
+
+      <!-- Mobile Navigation Bar -->
+      <nav class="md:hidden border-t border-beige-200 dark:border-darkbeige-800 px-4 py-2 flex items-center justify-around bg-beige-50/80 dark:bg-darkbeige-900/80">
+        <router-link
+          to="/"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+          :class="$route.path === '/' ? 'text-amberbrown-600 dark:text-amberbrown-300 bg-amberbrown-50 dark:bg-darkbeige-800 font-semibold' : 'text-stone-600 dark:text-stone-300'"
+        >
+          {{ t('nav.search') }}
+        </router-link>
+
+        <router-link
+          v-if="guestAuth.isLoggedIn"
+          to="/chuyen-di-cua-toi"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+          :class="$route.path.includes('chuyen-di') ? 'text-amberbrown-600 dark:text-amberbrown-300 bg-amberbrown-50 dark:bg-darkbeige-800 font-semibold' : 'text-stone-600 dark:text-stone-300'"
+        >
+          {{ t('nav.myTrips') }}
+        </router-link>
+
+        <router-link
+          to="/don/tra-cuu"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
+          :class="$route.path.startsWith('/don') ? 'text-amberbrown-600 dark:text-amberbrown-300 bg-amberbrown-50 dark:bg-darkbeige-800 font-semibold' : 'text-stone-600 dark:text-stone-300'"
+        >
+          {{ t('nav.lookup') }}
+        </router-link>
+      </nav>
     </header>
 
     <!-- Main Content Slot -->
