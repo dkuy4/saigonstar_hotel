@@ -129,9 +129,17 @@ h1, h2, h3, h4, .font-display {
 .bg-beige-50 { background-color: #FDFBF7 !important; }
 .bg-beige-100 { background-color: #FAF6EE !important; }
 .bg-beige-200 { background-color: #F3EBDD !important; }
-.border-beige-200 { border-color: #F3EBDD !important; }
-.border-beige-300 { border-color: #EFE6D5 !important; }
+.border-beige-200 { border-color: #E2D6C1 !important; }
+.border-beige-300 { border-color: #D5C6AE !important; }
 .hover\:bg-beige-200\/50:hover, .hover\:bg-beige-200\/60:hover { background-color: #F3EBDD !important; }
+
+/* Accessible placeholders & muted text */
+input::placeholder,
+textarea::placeholder {
+  color: #6B655E !important;
+  opacity: 1;
+}
+.text-stone-400 { color: #6B655E !important; }
 
 /* Dark mode beige-black utilities */
 html.dark .dark\:bg-darkbeige-950 { background-color: #0F0E0C !important; }
@@ -140,8 +148,15 @@ html.dark .dark\:bg-darkbeige-900\/95 { background-color: rgba(18, 17, 15, 0.95)
 html.dark .dark\:bg-darkbeige-850 { background-color: #181714 !important; }
 html.dark .dark\:bg-darkbeige-800 { background-color: #222019 !important; }
 html.dark .dark\:border-darkbeige-800 { border-color: #2D2A24 !important; }
-html.dark .dark\:border-darkbeige-700 { border-color: #38342C !important; }
-html.dark .dark\:text-amberbrown-300 { color: #DEAE9B !important; }
+html.dark .dark\:border-darkbeige-700 { border-color: #4A443A !important; }
+html.dark .dark\:text-amberbrown-300,
+html.dark .dark\:text-amberbrown-400 { color: #DEAE9B !important; }
+html.dark .dark\:text-stone-500 { color: #A8A29E !important; }
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #A8A29E !important;
+  opacity: 1;
+}
 html.dark .dark\:bg-slate-900 { background-color: #181714 !important; }
 
 /* Global dark mode surface styling for cards */
