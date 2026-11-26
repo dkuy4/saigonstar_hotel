@@ -1,7 +1,8 @@
 {
   "app": {
-    "name": "Saigon Star Hotel",
-    "subtitle": "Online Room Booking System"
+    "name": "SaigonStar",
+    "subtitle": "Hotel Operations & Admin Portal",
+    "portal": "STAFF PORTAL"
   },
   "nav": {
     "home": "Home",
@@ -11,9 +12,18 @@
     "bookings": "Bookings",
     "housekeeping": "Housekeeping",
     "reports": "Reports",
-    "management": "Administration",
-    "login": "Staff Login",
-    "logout": "Logout"
+    "management": "Room Admin",
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "groupOperations": "Operations",
+    "groupFinance": "Finance & Audit",
+    "groupAdmin": "Administration",
+    "createBooking": "Walk-in Booking",
+    "refunds": "Refunds",
+    "reconciliation": "Reconciliation",
+    "auditLogs": "Audit Logs",
+    "system": "System",
+    "toggleSidebar": "Toggle Sidebar"
   },
   "search": {
     "title": "Find & Book Your Stay",
@@ -118,7 +128,8 @@
     "perHour": " / hour"
   },
   "footer": {
-    "copyright": "© 2026 {name}. All rights reserved.",
-    "tagline": "Premium hospitality standards - 24/7 front desk service"
+    "copyright": "© 2026 SaigonStar - Staff Admin Portal",
+    "tagline": "Premium hospitality standards - 24/7 front desk service",
+    "version": "Internal Version 1.1 - Role-Based Access Control"
   }
 }

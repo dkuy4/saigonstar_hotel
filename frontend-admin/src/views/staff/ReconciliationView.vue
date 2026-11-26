@@ -1,18 +1,18 @@
 <template>
   <div class="space-y-6 pb-16 max-w-7xl mx-auto">
     <!-- Header & Action Toolbar -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-darkbeige-800">
       <div>
         <div class="flex items-center space-x-3">
-          <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <Coins class="w-7 h-7 text-sky-600" />
+          <h1 class="font-display text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <Coins class="w-6 h-6 text-amberbrown-400" />
             <span>Đối soát doanh thu & Dòng tiền theo ngày</span>
           </h1>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 border border-sky-200">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amberbrown-500/20 text-amberbrown-300 border border-amberbrown-500/30">
             F12 Báo cáo
           </span>
         </div>
-        <p class="text-xs text-slate-500 mt-1">
+        <p class="text-xs text-stone-400 mt-1">
           Đối soát tổng thu, tổng hoàn và thực thu ròng phân tách theo từng phương thức và kênh thanh toán (FR-39)
         </p>
       </div>

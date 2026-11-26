@@ -1,15 +1,15 @@
 <template>
   <div class="space-y-6 pb-12">
     <!-- Header & Live Bar -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-darkbeige-800">
       <div>
         <div class="flex items-center space-x-3">
-          <h1 class="text-2xl font-black text-slate-900 tracking-tight">Sơ đồ phòng</h1>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-800">
+          <h1 class="font-display text-2xl font-bold text-white tracking-tight">Sơ đồ phòng</h1>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amberbrown-500/20 text-amberbrown-300 border border-amberbrown-500/30">
             Lễ tân & Quản lý
           </span>
         </div>
-        <p class="text-xs text-slate-500 mt-1">
+        <p class="text-xs text-stone-400 mt-1">
           Trực quan hóa ma trận 51 phòng theo tầng và thời gian thực
         </p>
       </div>
@@ -17,42 +17,38 @@
       <!-- Controls: Time selector & Auto refresh -->
       <div class="flex flex-wrap items-center gap-3">
         <!-- Datetime picker -->
-        <div class="flex items-center space-x-1.5 bg-white border border-slate-200 rounded-xl px-3 py-1.5 shadow-sm text-xs">
-          <span class="text-slate-400 font-medium">Thời điểm:</span>
+        <div class="flex items-center space-x-1.5 bg-darkbeige-850 border border-darkbeige-700 rounded-xl px-3 py-1.5 shadow-sm text-xs">
+          <span class="text-stone-400 font-medium">Thời điểm:</span>
           <input
             v-model="atTimeInput"
             @change="handleTimeChange"
             type="datetime-local"
-            class="bg-transparent text-slate-800 font-medium outline-none text-xs"
+            class="bg-transparent text-white font-medium outline-none text-xs"
           />
           <button
             v-if="isCustomTime"
             @click="resetToNow"
             title="Quay lại thời gian thực"
-            class="px-2 py-0.5 bg-sky-50 text-sky-600 rounded font-bold hover:bg-sky-100 text-[11px]"
+            class="px-2 py-0.5 bg-amberbrown-500/20 text-amberbrown-300 rounded font-bold hover:bg-amberbrown-500/30 text-[11px]"
           >
             Hiện tại
           </button>
         </div>
 
-        <!-- Auto refresh toggle -->
+        <!-- Auto refresh toggle (Unslop: no blinking/ping dots) -->
         <button
           @click="toggleAutoRefresh"
-          :class="autoRefresh ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200'"
-          class="border px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition"
+          :class="autoRefresh ? 'bg-emerald-950/50 text-emerald-300 border-emerald-800' : 'bg-darkbeige-850 text-stone-400 border-darkbeige-700'"
+          class="border px-3 py-1.5 rounded-xl text-xs font-semibold transition"
         >
-          <span class="relative flex h-2 w-2">
-            <span v-if="autoRefresh" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span :class="autoRefresh ? 'bg-emerald-500' : 'bg-slate-400'" class="relative inline-flex rounded-full h-2 w-2"></span>
-          </span>
-          <span>Tự làm mới (30s)</span>
+          <span>{{ autoRefresh ? 'Tự làm mới: Bật (30s)' : 'Tự làm mới: Tắt' }}</span>
         </button>
 
         <!-- Manual refresh button -->
         <button
           @click="fetchBoard"
           :disabled="loading"
-          class="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 shadow-sm transition disabled:opacity-50"
+          class="p-2 bg-darkbeige-850 hover:bg-darkbeige-800 border border-darkbeige-700 rounded-xl text-stone-300 shadow-sm transition disabled:opacity-50"
           title="Làm mới ngay"
         >
           <svg :class="{ 'animate-spin': loading }" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

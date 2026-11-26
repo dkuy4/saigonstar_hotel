@@ -1,10 +1,10 @@
 <template>
   <div class="reports-page space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-darkbeige-800">
       <div>
-        <h1 class="text-2xl font-bold text-slate-800">Báo cáo quản trị & Thống kê KPI</h1>
-        <p class="text-sm text-slate-500 mt-1">
+        <h1 class="font-display text-2xl font-bold text-white tracking-tight">Báo cáo quản trị & Thống kê KPI</h1>
+        <p class="text-xs text-stone-400 mt-1">
           Dữ liệu thời gian thực từ cơ sở dữ liệu Oracle thông qua gói thủ tục PKG_BAO_CAO (FR-40 đến FR-44).
         </p>
       </div>

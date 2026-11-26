@@ -993,9 +993,9 @@
             Bạn có chắc chắn muốn chuyển đơn đặt phòng <strong class="text-slate-800 font-bold">{{ booking.code }}</strong> sang trạng thái <strong>NO_SHOW</strong> (khách không đến nhận phòng)?
           </p>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-500 space-y-1">
-            <p>• Khách hàng: <strong>{{ booking.customer?.name }}</strong> ({{ booking.customer?.phone }})</p>
-            <p>• Thời gian nhận dự kiến: <strong>{{ formatDateTime(booking.checkin) }}</strong></p>
-            <p>• Lưu ý: Theo quy tắc BR-27, BR-28, đơn NO_SHOW sẽ không được hoàn tiền tự động.</p>
+            <p>- Khách hàng: <strong>{{ booking.customer?.name }}</strong> ({{ booking.customer?.phone }})</p>
+            <p>- Thời gian nhận dự kiến: <strong>{{ formatDateTime(booking.checkin) }}</strong></p>
+            <p>- Lưu ý: Theo quy tắc BR-27, BR-28, đơn NO_SHOW sẽ không được hoàn tiền tự động.</p>
           </div>
           <div v-if="noShowError" class="p-3 bg-rose-50 text-rose-600 rounded-xl text-xs border border-rose-200">
             {{ noShowError }}

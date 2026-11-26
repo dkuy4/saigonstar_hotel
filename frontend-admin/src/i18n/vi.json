@@ -1,7 +1,8 @@
 {
   "app": {
-    "name": "Khách sạn Sài Gòn Star",
-    "subtitle": "Hệ thống đặt phòng trực tuyến"
+    "name": "SaigonStar",
+    "subtitle": "Cổng Quản Trị & Nghiệp Vụ Khách Sạn",
+    "portal": "STAFF PORTAL"
   },
   "nav": {
     "home": "Trang chủ",
@@ -11,9 +12,18 @@
     "bookings": "Quản lý đơn",
     "housekeeping": "Buồng phòng",
     "reports": "Báo cáo",
-    "management": "Quản trị",
+    "management": "Quản trị phòng",
     "login": "Đăng nhập",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "groupOperations": "Vận hành",
+    "groupFinance": "Tài chính & Đối soát",
+    "groupAdmin": "Quản trị & Hệ thống",
+    "createBooking": "Tạo đơn tại quầy",
+    "refunds": "Hoàn tiền",
+    "reconciliation": "Đối soát",
+    "auditLogs": "Nhật ký",
+    "system": "Hệ thống",
+    "toggleSidebar": "Thu gọn / Mở rộng menu"
   },
   "search": {
     "title": "Tìm & Đặt phòng khách sạn",
@@ -118,7 +128,8 @@
     "perHour": " / giờ"
   },
   "footer": {
-    "copyright": "© 2026 {name}. Toàn bộ quyền được bảo lưu.",
-    "tagline": "Tiêu chuẩn nghỉ dưỡng cao cấp - Dịch vụ lễ tân phục vụ 24/7"
+    "copyright": "© 2026 SaigonStar - Cổng Quản Trị Nhân Viên",
+    "tagline": "Tiêu chuẩn nghỉ dưỡng cao cấp - Dịch vụ lễ tân phục vụ 24/7",
+    "version": "Phiên bản nội bộ 1.1 - Bảo mật & Phân quyền theo vai trò"
   }
 }
