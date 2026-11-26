@@ -109,7 +109,7 @@
               <th class="py-3 px-4">Mã đơn</th>
               <th class="py-3 px-4">Khách hàng</th>
               <th class="py-3 px-4">Phòng / Hạng</th>
-              <th class="py-3 px-4">Thời gian lưu trú</th>
+              <th class="py-3 px-4">Thời gian đặt đơn</th>
               <th class="py-3 px-4">Trạng thái</th>
               <th class="py-3 px-4 text-right">Tổng tiền</th>
               <th class="py-3 px-4 text-center">Kênh</th>
@@ -143,10 +143,10 @@
                 <div class="text-[11px] text-slate-500">{{ b.roomType || 'Standard' }}</div>
               </td>
 
-              <!-- Dates -->
+              <!-- Created date -->
               <td class="py-3.5 px-4 whitespace-nowrap text-slate-600">
-                <div>{{ formatDateTime(b.checkin) }}</div>
-                <div class="text-slate-400 text-[10px]">đến {{ formatDateTime(b.checkout) }}</div>
+                <div class="font-medium text-slate-800">{{ formatDateTime(b.createdAt || b.checkin) }}</div>
+                <div class="text-slate-400 text-[10px]">Lưu trú: {{ formatDateTime(b.checkin) }} - {{ formatDateTime(b.checkout) }}</div>
               </td>
 
               <!-- Status -->

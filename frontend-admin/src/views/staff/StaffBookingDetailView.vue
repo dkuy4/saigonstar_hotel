@@ -316,17 +316,17 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <tr v-for="seg in booking.segments" :key="seg.segment_id" class="hover:bg-slate-50/75">
+              <tr v-for="(seg, idx) in booking.segments" :key="seg.segmentId || seg.segment_id || idx" class="hover:bg-slate-50/75">
                 <td class="p-3 font-mono font-bold text-slate-900">
-                  <span v-if="seg.room_number" class="px-2 py-1 bg-sky-50 text-sky-700 border border-sky-200 rounded">
-                    Phòng {{ seg.room_number }}
+                  <span v-if="seg.roomNumber || seg.room_number" class="px-2 py-1 bg-sky-50 text-sky-700 border border-sky-200 rounded">
+                    Phòng {{ seg.roomNumber || seg.room_number }}
                   </span>
                   <span v-else class="text-slate-400 italic">Chưa xếp phòng</span>
                 </td>
-                <td class="p-3 font-mono text-slate-700">Tầng {{ seg.floor }}</td>
-                <td class="p-3 font-semibold text-slate-800">{{ seg.room_type }}</td>
-                <td class="p-3 font-mono">{{ formatDateTime(seg.checkin) }}</td>
-                <td class="p-3 font-mono">{{ formatDateTime(seg.checkout) }}</td>
+                <td class="p-3 font-mono text-slate-700">Tầng {{ seg.floor ?? seg.so_tang ?? '-' }}</td>
+                <td class="p-3 font-semibold text-slate-800">{{ seg.roomType || seg.room_type || booking.room_type || 'Standard' }}</td>
+                <td class="p-3 font-mono">{{ formatDateTime(seg.from || seg.checkin || booking.checkin) }}</td>
+                <td class="p-3 font-mono">{{ formatDateTime(seg.to || seg.checkout || booking.checkout) }}</td>
               </tr>
             </tbody>
           </table>
@@ -360,8 +360,8 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
-                <tr v-for="tx in booking.transactions" :key="tx.transaction_id" class="hover:bg-slate-50/75">
-                  <td class="p-3 font-mono font-medium text-slate-900">{{ tx.reference_code || ('GD#' + tx.transaction_id) }}</td>
+                <tr v-for="(tx, idx) in booking.transactions" :key="tx.transactionId || tx.transaction_id || idx" class="hover:bg-slate-50/75">
+                  <td class="p-3 font-mono font-medium text-slate-900">{{ tx.referenceCode || tx.reference_code || (tx.transactionId || tx.transaction_id ? 'GD#' + (tx.transactionId || tx.transaction_id) : 'GD# -') }}</td>
                   <td class="p-3 font-medium">{{ tx.method }} ({{ tx.channel }})</td>
                   <td class="p-3 text-right font-mono font-bold text-emerald-700">{{ formatCurrency(tx.amount) }}</td>
                   <td class="p-3 text-center">
@@ -372,7 +372,7 @@
                       {{ tx.status }}
                     </span>
                   </td>
-                  <td class="p-3 font-mono text-[11px] text-slate-500">{{ formatDateTime(tx.transaction_date) }}</td>
+                  <td class="p-3 font-mono text-[11px] text-slate-500">{{ formatDateTime(tx.transactionDate || tx.transaction_date) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -403,8 +403,8 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
-                <tr v-for="rf in booking.refunds" :key="rf.refund_id" class="hover:bg-slate-50/75">
-                  <td class="p-3 font-mono font-medium text-slate-900">#{{ rf.refund_id }}</td>
+                <tr v-for="(rf, idx) in booking.refunds" :key="rf.refundId || rf.refund_id || idx" class="hover:bg-slate-50/75">
+                  <td class="p-3 font-mono font-medium text-slate-900">#{{ rf.refundId || rf.refund_id }}</td>
                   <td class="p-3 text-right font-mono font-bold text-rose-700">{{ formatCurrency(rf.amount) }}</td>
                   <td class="p-3 text-slate-600 truncate max-w-[150px]">{{ rf.reason }}</td>
                   <td class="p-3 text-center">
@@ -429,20 +429,20 @@
             <Receipt class="w-4 h-4 text-slate-500" />
             <span>Hóa đơn lưu trú đã cấp</span>
           </span>
-          <span class="font-mono text-slate-900 font-bold">Số HĐ: {{ booking.invoice.invoice_number }}</span>
+          <span class="font-mono text-slate-900 font-bold">Số HĐ: {{ booking.invoice.invoiceNumber || booking.invoice.invoice_number }}</span>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
           <div>
             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Ngày lập</span>
-            <span class="font-medium text-slate-800 font-mono">{{ formatDateTime(booking.invoice.issued_at) }}</span>
+            <span class="font-medium text-slate-800 font-mono">{{ formatDateTime(booking.invoice.issuedAt || booking.invoice.issued_at) }}</span>
           </div>
           <div>
             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Người lập</span>
-            <span class="font-medium text-slate-800">{{ booking.invoice.created_by || '-' }}</span>
+            <span class="font-medium text-slate-800">{{ booking.invoice.createdBy || booking.invoice.created_by || '-' }}</span>
           </div>
           <div>
             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Tổng thanh toán</span>
-            <span class="font-bold text-sky-700 font-mono">{{ formatCurrency(booking.invoice.total_amount) }}</span>
+            <span class="font-bold text-sky-700 font-mono">{{ formatCurrency(booking.invoice.totalAmount || booking.invoice.total_amount) }}</span>
           </div>
         </div>
       </div>
