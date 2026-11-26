@@ -31,9 +31,208 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body,
+.font-sans {
+  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
   margin: 0;
-  font-family: 'Be Vietnam Pro', sans-serif;
   background-color: #0F0E0C;
   color: #EDE8DF;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: 'Beautique Display', Georgia, serif !important;
+}
+
+/* ==========================================================================
+   GLOBAL DARK MODE SURFACES, BORDERS & HIGH-CONTRAST TEXT (Unslop)
+   Applies consistently across all Admin views
+   ========================================================================== */
+.bg-white {
+  background-color: #181714 !important;
+  color: #F5F5F4 !important;
+  border-color: #2D2A24 !important;
+}
+
+.bg-slate-50,
+.bg-slate-50\/80,
+.bg-gray-50 {
+  background-color: #12110F !important;
+}
+
+.bg-slate-100,
+.bg-gray-100 {
+  background-color: #222019 !important;
+  color: #F5F5F4 !important;
+}
+
+.border-slate-200,
+.border-slate-200\/80,
+.border-slate-200\/90,
+.border-slate-100,
+.border-gray-200,
+.border-gray-100 {
+  border-color: #2D2A24 !important;
+}
+
+.border-slate-300,
+.border-gray-300 {
+  border-color: #4A443A !important;
+}
+
+.text-slate-900,
+.text-slate-800,
+.text-gray-900,
+.text-gray-800 {
+  color: #F5F5F4 !important;
+}
+
+.text-slate-700,
+.text-slate-600,
+.text-gray-700,
+.text-gray-600 {
+  color: #D6D3D1 !important;
+}
+
+.text-slate-500,
+.text-slate-400,
+.text-gray-500,
+.text-gray-400 {
+  color: #A8A29E !important;
+}
+
+/* Inputs, Selects & Placeholders */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  background-color: #12110F;
+  color: #F5F5F4;
+  border-color: #4A443A;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #A8A29E !important;
+  opacity: 1;
+}
+
+/* Tables */
+thead,
+thead tr,
+th {
+  background-color: #12110F !important;
+  color: #D6D3D1 !important;
+  border-color: #2D2A24 !important;
+}
+
+tbody tr {
+  border-color: #2D2A24 !important;
+}
+
+tbody tr:hover {
+  background-color: #222019 !important;
+}
+
+/* Status & Pastel Surfaces adapted for Dark Mode */
+.bg-emerald-50,
+.bg-emerald-50\/50,
+.bg-emerald-100 {
+  background-color: rgba(6, 78, 59, 0.35) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+.text-emerald-700,
+.text-emerald-800 {
+  color: #6EE7B7 !important;
+}
+
+.bg-sky-50,
+.bg-sky-50\/50,
+.bg-sky-100,
+.bg-blue-50,
+.bg-blue-50\/50,
+.bg-blue-100,
+.bg-indigo-50,
+.bg-indigo-50\/50,
+.bg-indigo-100 {
+  background-color: rgba(12, 74, 110, 0.35) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+}
+.text-sky-600,
+.text-sky-700,
+.text-sky-800,
+.text-sky-900,
+.text-blue-600,
+.text-blue-700,
+.text-blue-800,
+.text-blue-900,
+.text-indigo-600,
+.text-indigo-700,
+.text-indigo-800,
+.text-indigo-900 {
+  color: #BAE6FD !important;
+}
+
+.bg-amber-50,
+.bg-amber-50\/50,
+.bg-amber-100 {
+  background-color: rgba(120, 53, 15, 0.35) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+.text-amber-700,
+.text-amber-800,
+.text-amber-900 {
+  color: #FDE68A !important;
+}
+
+.bg-purple-50,
+.bg-purple-50\/50,
+.bg-purple-100 {
+  background-color: rgba(88, 28, 135, 0.35) !important;
+  border-color: rgba(192, 132, 252, 0.35) !important;
+}
+.text-purple-700,
+.text-purple-800,
+.text-purple-900 {
+  color: #E9D5FF !important;
+}
+
+.bg-rose-50,
+.bg-rose-50\/50,
+.bg-rose-100,
+.bg-red-50,
+.bg-red-50\/50,
+.bg-red-100 {
+  background-color: rgba(136, 19, 55, 0.35) !important;
+  border-color: rgba(251, 113, 133, 0.35) !important;
+}
+.text-rose-600,
+.text-rose-700,
+.text-rose-800,
+.text-rose-900,
+.text-red-600,
+.text-red-700,
+.text-red-800,
+.text-red-900 {
+  color: #FECDD3 !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(168, 162, 158, 0.25);
+  border-radius: 9999px;
 }
