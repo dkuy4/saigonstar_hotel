@@ -1,37 +1,37 @@
 <template>
   <div class="space-y-8">
     <!-- Top Search Summary & Bar -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+    <div class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-6 shadow-sm transition-colors">
       <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div class="flex items-center space-x-2">
             <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase"
-              :class="searchType === 'NGAY' ? 'bg-sky-100 text-sky-800' : 'bg-purple-100 text-purple-800'">
+              :class="searchType === 'NGAY' ? 'bg-amberbrown-100 text-amberbrown-800 dark:bg-amberbrown-950/40 dark:text-amberbrown-200' : 'bg-purple-100 text-purple-800 dark:bg-purple-950/40 dark:text-purple-200'">
               {{ searchType === 'NGAY' ? t('search.daily') : t('search.hourly') }}
             </span>
-            <span class="text-xs text-slate-400">-</span>
-            <span class="text-xs text-slate-600 font-medium">{{ guestsCount }} khách</span>
+            <span class="text-xs text-stone-400 dark:text-stone-500">-</span>
+            <span class="text-xs text-stone-600 dark:text-stone-300 font-medium">{{ guestsCount }} {{ t('bookingHold.personUnit') }}</span>
           </div>
 
-          <h2 class="text-xl font-bold text-slate-900 mt-1">
-            {{ formatDateTime(checkinStr) }} → {{ formatDateTime(checkoutStr) }}
+          <h2 class="font-display text-xl font-bold text-stone-900 dark:text-white mt-1">
+            {{ formatDateTime(checkinStr) }} - {{ formatDateTime(checkoutStr) }}
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">
+          <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
             {{ stayDurationDescription }}
           </p>
         </div>
 
         <button
           @click="showSearchBox = !showSearchBox"
-          class="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center space-x-1.5"
+          class="px-4 py-2 border border-beige-300 dark:border-darkbeige-700 hover:bg-beige-100/60 dark:hover:bg-darkbeige-800 text-stone-700 dark:text-stone-200 text-xs font-semibold rounded-xl transition flex items-center space-x-1.5"
         >
-          <SlidersHorizontal class="w-3.5 h-3.5 text-slate-500" />
-          <span>{{ showSearchBox ? 'Ẩn bộ tìm kiếm' : t('search.modifySearch') }}</span>
+          <SlidersHorizontal class="w-3.5 h-3.5 text-stone-500" />
+          <span>{{ showSearchBox ? t('common.close') : t('search.modifySearch') }}</span>
         </button>
       </div>
 
       <!-- Collapsible Search Box -->
-      <div v-if="showSearchBox" class="mt-6 pt-6 border-t border-slate-100">
+      <div v-if="showSearchBox" class="mt-6 pt-6 border-t border-beige-200 dark:border-darkbeige-800">
         <SearchBox
           :initial-type="searchType"
           :initial-checkin="checkinStr"
@@ -42,38 +42,38 @@
     </div>
 
     <!-- Error Alert Banner -->
-    <div v-if="errorMessage" class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-sm flex items-start space-x-3">
+    <div v-if="errorMessage" class="p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-800 dark:text-rose-200 rounded-xl text-sm flex items-start space-x-3">
       <AlertCircle class="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
       <div>
-        <p class="font-semibold">Không thể tải danh sách phòng</p>
+        <p class="font-semibold">{{ t('errors.INTERNAL_SERVER_ERROR') }}</p>
         <p class="text-xs mt-0.5">{{ errorMessage }}</p>
       </div>
     </div>
 
     <!-- Loading Skeleton -->
     <div v-if="loading" class="space-y-4">
-      <div v-for="i in 3" :key="i" class="bg-white rounded-2xl border border-slate-200 p-6 animate-pulse flex flex-col md:flex-row gap-6">
-        <div class="w-full md:w-64 h-48 bg-slate-200 rounded-xl"></div>
+      <div v-for="i in 3" :key="i" class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-6 animate-pulse flex flex-col md:flex-row gap-6">
+        <div class="w-full md:w-64 h-48 bg-stone-200 dark:bg-darkbeige-800 rounded-xl"></div>
         <div class="flex-1 space-y-3">
-          <div class="h-6 bg-slate-200 rounded w-1/3"></div>
-          <div class="h-4 bg-slate-200 rounded w-2/3"></div>
-          <div class="h-4 bg-slate-200 rounded w-1/2"></div>
+          <div class="h-6 bg-stone-200 dark:bg-darkbeige-800 rounded w-1/3"></div>
+          <div class="h-4 bg-stone-200 dark:bg-darkbeige-800 rounded w-2/3"></div>
+          <div class="h-4 bg-stone-200 dark:bg-darkbeige-800 rounded w-1/2"></div>
         </div>
       </div>
     </div>
 
     <!-- No Availability Notice -->
-    <div v-else-if="!loading && rooms.length === 0 && !errorMessage" class="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-xl mx-auto space-y-4">
-      <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto">
+    <div v-else-if="!loading && rooms.length === 0 && !errorMessage" class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-12 text-center max-w-xl mx-auto space-y-4">
+      <div class="w-16 h-16 bg-amber-50 dark:bg-amber-950/30 text-amber-600 rounded-full flex items-center justify-center mx-auto">
         <Building2 class="w-8 h-8 text-amber-600" />
       </div>
-      <h3 class="text-lg font-bold text-slate-800">{{ t('search.noRooms') }}</h3>
-      <p class="text-sm text-slate-500 leading-relaxed">
+      <h3 class="font-display text-lg font-bold text-stone-900 dark:text-white">{{ t('search.noRooms') }}</h3>
+      <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
         {{ t('search.suggestInterval') }}
       </p>
       <button
         @click="showSearchBox = true"
-        class="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold rounded-xl transition"
+        class="px-5 py-2.5 bg-amberbrown-500 hover:bg-amberbrown-600 text-white text-xs font-semibold rounded-xl transition"
       >
         {{ t('search.modifySearch') }}
       </button>
@@ -82,30 +82,30 @@
     <!-- Room Results List -->
     <div v-else-if="!loading && rooms.length > 0" class="space-y-6">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-slate-900">
-          {{ t('search.resultsTitle') }} ({{ rooms.length }} hạng phòng)
+        <h3 class="font-display text-lg font-bold text-stone-900 dark:text-white">
+          {{ t('results.title') }} ({{ rooms.length }})
         </h3>
-        <span class="text-xs text-slate-500 italic">Giá đã bao gồm toàn bộ thuế VAT và phí dịch vụ</span>
+        <span class="text-xs text-stone-500 dark:text-stone-400 italic">{{ t('home.showcaseSubtitle') }}</span>
       </div>
 
       <div class="grid grid-cols-1 gap-6">
         <div
           v-for="room in rooms"
           :key="room.room_type_id"
-          class="bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col lg:flex-row"
+          class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 shadow-sm transition overflow-hidden flex flex-col lg:flex-row"
         >
-          <!-- Room Thumbnail / Image -->
-          <div class="lg:w-80 h-56 lg:h-auto bg-slate-100 relative overflow-hidden flex-shrink-0">
+          <!-- Room Thumbnail / Image (Unslop: no random hover scaling) -->
+          <div class="lg:w-80 h-56 lg:h-auto bg-beige-100 dark:bg-darkbeige-900 relative overflow-hidden flex-shrink-0">
             <img
               :src="getRoomImage(room.code)"
               :alt="room.name"
-              class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+              class="w-full h-full object-cover"
             />
-            <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-md text-xs font-semibold">
+            <div class="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-md text-xs font-semibold">
               {{ room.code }}
             </div>
-            <div class="absolute bottom-3 left-3 bg-emerald-600 text-white px-2.5 py-1 rounded-md text-xs font-semibold shadow">
-              {{ t('search.roomsLeft', { count: room.available_rooms }) }}
+            <div class="absolute bottom-3 left-3 bg-emerald-700 text-white px-2.5 py-1 rounded-md text-xs font-semibold shadow">
+              {{ t('results.roomsLeft', { count: room.available_rooms }) }}
             </div>
           </div>
 
@@ -114,27 +114,27 @@
             <div class="space-y-3">
               <div class="flex items-start justify-between gap-4">
                 <div>
-                  <h4 class="text-xl font-bold text-slate-900">{{ room.name }}</h4>
-                  <p class="text-xs text-slate-500 flex items-center gap-2 mt-1">
+                  <h4 class="font-display text-xl font-bold text-stone-900 dark:text-white">{{ room.name }}</h4>
+                  <p class="text-xs text-stone-500 dark:text-stone-400 flex items-center gap-2 mt-1">
                     <span class="flex items-center space-x-1">
-                      <Users class="w-3.5 h-3.5 text-slate-400" />
-                      <span>Tối đa {{ room.capacity }} người</span>
+                      <Users class="w-3.5 h-3.5 text-stone-400" />
+                      <span>{{ t('results.maxGuests', { count: room.capacity }) }}</span>
                     </span>
                     <span>-</span>
-                    <span v-if="room.hourly_allowed" class="text-sky-600 font-medium flex items-center space-x-1">
+                    <span v-if="room.hourly_allowed" class="text-amberbrown-600 dark:text-amberbrown-400 font-medium flex items-center space-x-1">
                       <Clock class="w-3.5 h-3.5" />
-                      <span>Cho thuê theo giờ & theo ngày</span>
+                      <span>{{ t('results.hourlyAndDaily') }}</span>
                     </span>
-                    <span v-else class="text-slate-500 flex items-center space-x-1">
-                      <Calendar class="w-3.5 h-3.5 text-slate-400" />
-                      <span>Chỉ thuê theo ngày</span>
+                    <span v-else class="text-stone-500 dark:text-stone-400 flex items-center space-x-1">
+                      <Calendar class="w-3.5 h-3.5 text-stone-400" />
+                      <span>{{ t('results.dailyOnly') }}</span>
                     </span>
                   </p>
                 </div>
               </div>
 
               <!-- Description -->
-              <p class="text-xs text-slate-600 leading-relaxed">
+              <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
                 {{ room.description }}
               </p>
 
@@ -143,43 +143,39 @@
                 <span
                   v-for="(amenity, idx) in room.amenities.split(',')"
                   :key="idx"
-                  class="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] rounded-lg font-medium flex items-center space-x-1"
+                  class="px-2.5 py-1 bg-beige-100 dark:bg-darkbeige-800 text-stone-700 dark:text-stone-300 text-[11px] rounded-lg font-medium flex items-center space-x-1"
                 >
-                  <Check class="w-3 h-3 text-emerald-600" />
+                  <Check class="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                   <span>{{ amenity.trim() }}</span>
                 </span>
               </div>
             </div>
 
-            <!-- Pricing & Action Section (BR-59 Compliant) -->
-            <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4">
+            <!-- Pricing & Action Section -->
+            <div class="mt-6 pt-4 border-t border-beige-200 dark:border-darkbeige-800 flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4">
               <!-- Price Breakdown -->
               <div class="space-y-1">
-                <div class="text-[11px] uppercase tracking-wider font-semibold text-slate-500">
+                <div class="text-[11px] uppercase tracking-wider font-semibold text-stone-500 dark:text-stone-400">
                   {{ t('pricing.totalWithVat') }}
                 </div>
                 <!-- Prominent Grand Total -->
-                <div class="text-2xl font-black text-sky-600">
+                <div class="text-2xl font-black text-amberbrown-600 dark:text-amberbrown-400">
                   <MoneyText :value="room.total_amount" currency="VND" />
                 </div>
                 <!-- Breakdown note -->
-                <div class="text-[11px] text-slate-500 flex items-center space-x-2">
-                  <span>Tiền phòng: <MoneyText :value="room.room_amount" currency="VND" /></span>
+                <div class="text-[11px] text-stone-500 dark:text-stone-400 flex items-center space-x-2">
+                  <span>{{ t('pricing.roomAmount') }}: <MoneyText :value="room.room_amount" currency="VND" /></span>
                   <span>+</span>
                   <span>VAT ({{ (room.vat_rate * 100).toFixed(0) }}%): <MoneyText :value="room.vat_amount" currency="VND" /></span>
-                </div>
-                <!-- Converted Foreign Currency Estimate (FR-10) -->
-                <div v-if="room.converted_prices && room.converted_prices.USD" class="text-[11px] text-slate-400 font-mono">
-                  {{ t('pricing.referencePrice', { amount: room.converted_prices.USD, currency: 'USD' }) }}
                 </div>
               </div>
 
               <!-- Booking CTA Button -->
               <button
                 @click="goToBooking(room)"
-                class="w-full sm:w-auto px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2"
+                class="w-full sm:w-auto px-6 py-3 bg-amberbrown-500 hover:bg-amberbrown-600 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center justify-center space-x-2"
               >
-                <span>{{ t('search.bookNow') }}</span>
+                <span>{{ t('results.bookNow') }}</span>
                 <span>→</span>
               </button>
             </div>
@@ -215,11 +211,10 @@ const guestsCount = computed(() => route.query.guests || '2');
 
 const formatDateTime = (isoStr) => {
   if (!isoStr) return '';
-  // If string contains explicit timezone or date-time components
   const match = isoStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
   if (match) {
     const [_, y, m, d, hh, mm] = match;
-    return `${hh}:${mm} ngày ${d}/${m}/${y}`;
+    return `${hh}:${mm} - ${d}/${m}/${y}`;
   }
   const d = new Date(isoStr);
   return d.toLocaleString('vi-VN', {
@@ -239,9 +234,9 @@ const stayDurationDescription = computed(() => {
 
   if (searchType.value === 'NGAY') {
     const nights = Math.round(diffHours / 24);
-    return `${nights} đêm lưu trú (Nhận 14:00 - Trả 12:00)`;
+    return `${nights} ${t('pricing.night')} (Check-in 14:00 - Check-out 12:00)`;
   } else {
-    return `${diffHours} giờ lưu trú theo giờ`;
+    return `${diffHours} ${t('pricing.hour')}`;
   }
 });
 

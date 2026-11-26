@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-6 md:p-8">
+  <div class="bg-white dark:bg-darkbeige-850 rounded-2xl shadow-xl border border-beige-300 dark:border-darkbeige-800 p-6 md:p-8 transition-colors">
     <!-- Mode Selection Tabs -->
     <div class="flex items-center space-x-2 border-b border-beige-300 dark:border-darkbeige-800 pb-4 mb-6">
       <button
@@ -29,7 +29,7 @@
       <div v-if="searchType === 'NGAY'" class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Checkin Date -->
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">
+          <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
             {{ t('search.checkinDate') }} (14:00)
           </label>
           <input
@@ -37,13 +37,13 @@
             type="date"
             :min="todayStr"
             required
-            class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
+            class="w-full px-3.5 py-2.5 bg-white dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-sm font-medium text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-amberbrown-500 focus:border-amberbrown-500 outline-none shadow-sm"
           />
         </div>
 
         <!-- Checkout Date -->
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">
+          <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
             {{ t('search.checkoutDate') }} (12:00)
           </label>
           <input
@@ -51,18 +51,18 @@
             type="date"
             :min="dailyCheckinDate || todayStr"
             required
-            class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
+            class="w-full px-3.5 py-2.5 bg-white dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-sm font-medium text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-amberbrown-500 focus:border-amberbrown-500 outline-none shadow-sm"
           />
         </div>
 
         <!-- Guests -->
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">
+          <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
             {{ t('search.guests') }}
           </label>
           <select
             v-model="guests"
-            class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
+            class="w-full px-3.5 py-2.5 bg-white dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-sm font-medium text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-amberbrown-500 focus:border-amberbrown-500 outline-none shadow-sm"
           >
             <option :value="1">{{ t('search.guestsCount', { count: 1 }) }}</option>
             <option :value="2">{{ t('search.guestsCount', { count: 2 }) }}</option>
@@ -77,7 +77,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <!-- Hourly Date -->
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">
+            <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
               {{ t('search.hourlyDate') }}
             </label>
             <input
@@ -85,19 +85,19 @@
               type="date"
               :min="todayStr"
               required
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
+              class="w-full px-3.5 py-2.5 bg-white dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-sm font-medium text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-amberbrown-500 focus:border-amberbrown-500 outline-none shadow-sm"
             />
           </div>
 
           <!-- Hourly Start Time (15-min interval) -->
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">
+            <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
               {{ t('search.checkinTime') }} ({{ t('search.step15m') }})
             </label>
             <select
               v-model="hourlyTime"
               required
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
+              class="w-full px-3.5 py-2.5 bg-white dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-sm font-medium text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-amberbrown-500 focus:border-amberbrown-500 outline-none shadow-sm"
             >
               <option v-for="tSlot in timeSlots" :key="tSlot" :value="tSlot">
                 {{ tSlot }}
@@ -107,12 +107,12 @@
 
           <!-- Duration Hours -->
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">
+            <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
               {{ t('search.durationHours') }}
             </label>
             <select
               v-model="hourlyDuration"
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
+              class="w-full px-3.5 py-2.5 bg-white dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-sm font-medium text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-amberbrown-500 focus:border-amberbrown-500 outline-none shadow-sm"
             >
               <option :value="1">{{ t('search.hourCount', { count: 1 }) }}</option>
               <option :value="2">{{ t('search.hourCount', { count: 2 }) }}</option>
@@ -128,12 +128,12 @@
 
           <!-- Guests -->
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">
+            <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
               {{ t('search.guests') }}
             </label>
             <select
               v-model="guests"
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none shadow-sm"
+              class="w-full px-3.5 py-2.5 bg-white dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-sm font-medium text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-amberbrown-500 focus:border-amberbrown-500 outline-none shadow-sm"
             >
               <option :value="1">{{ t('search.guestsCount', { count: 1 }) }}</option>
               <option :value="2">{{ t('search.guestsCount', { count: 2 }) }} ({{ t('search.maxGuests') }})</option>
@@ -141,7 +141,7 @@
           </div>
         </div>
 
-        <div class="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3.5 py-2.5 rounded-xl flex items-center space-x-2.5">
+        <div class="text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 px-3.5 py-2.5 rounded-xl flex items-center space-x-2.5">
           <Info class="w-4 h-4 text-amber-600 flex-shrink-0" />
           <span>{{ t('search.hourlyNote', { rank: 'Standard' }) }}</span>
         </div>
@@ -151,7 +151,7 @@
       <div class="flex justify-end pt-2">
         <button
           type="submit"
-          class="w-full md:w-auto px-8 py-3 bg-amberbrown-500 hover:bg-amberbrown-600 text-white font-semibold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2"
+          class="w-full md:w-auto px-8 py-3 bg-amberbrown-500 hover:bg-amberbrown-600 text-white font-semibold text-sm rounded-xl shadow-md transition flex items-center justify-center space-x-2"
         >
           <Search class="w-4 h-4" />
           <span>{{ t('search.searchButton') }}</span>

@@ -1,101 +1,98 @@
 <template>
-  <div class="max-w-md mx-auto my-12 bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm">
+  <div class="max-w-md mx-auto my-12 bg-white dark:bg-darkbeige-850 p-8 rounded-2xl border border-beige-300 dark:border-darkbeige-800 shadow-sm transition-colors">
     <div class="text-center mb-8">
-      <div class="w-12 h-12 bg-slate-50 text-slate-700 rounded-xl mx-auto flex items-center justify-center mb-3 border border-slate-200">
-        <KeyRound class="w-6 h-6" />
-      </div>
-      <h2 class="text-2xl font-semibold text-slate-900 tracking-tight">Đặt lại mật khẩu</h2>
-      <p class="text-xs text-slate-500 mt-1">Xác nhận thông tin cá nhân để thiết lập mật khẩu mới</p>
+      <h2 class="font-display font-bold text-3xl text-stone-900 dark:text-white tracking-tight">{{ t('auth.forgotTitle') }}</h2>
+      <p class="text-xs text-stone-500 dark:text-stone-400 mt-1.5">{{ t('auth.forgotSubtitle') }}</p>
     </div>
 
     <!-- Success Message -->
-    <div v-if="successMessage" class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl space-y-3">
-      <p class="font-medium">{{ successMessage }}</p>
+    <div v-if="successMessage" class="p-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-200 text-xs rounded-xl space-y-3">
+      <p class="font-medium leading-relaxed">{{ successMessage }}</p>
       <router-link
         to="/dang-nhap"
-        class="inline-block py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition"
+        class="inline-block py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition"
       >
-        Đăng nhập với mật khẩu mới
+        {{ t('auth.loginWithNewPass') }}
       </router-link>
     </div>
 
     <!-- Form -->
     <form v-else @submit.prevent="handleResetPassword" class="space-y-4">
-      <div v-if="errorMessage" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center space-x-2">
+      <div v-if="errorMessage" class="p-3.5 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs rounded-xl flex items-center space-x-2">
         <AlertCircle class="w-4 h-4 flex-shrink-0" />
         <span>{{ errorMessage }}</span>
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Địa chỉ Email đã đăng ký</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.email') }}</label>
         <input
           v-model="email"
           type="email"
           required
-          placeholder="Ví dụ: khachhang@email.com"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.emailPlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Số điện thoại đã đăng ký</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.phone') }}</label>
         <input
           v-model="phone"
           type="tel"
           required
-          placeholder="Ví dụ: 0912345678"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.phonePlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Họ và tên của quý khách</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.fullName') }}</label>
         <input
           v-model="fullName"
           type="text"
           required
-          placeholder="Họ tên chính xác như lúc đăng ký"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.fullNamePlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
-      <div class="pt-2 border-t border-slate-100">
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Mật khẩu mới muốn đặt</label>
+      <div class="pt-2 border-t border-beige-200 dark:border-darkbeige-800">
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.newPassword') }}</label>
         <input
           v-model="newPassword"
           type="password"
           required
           minlength="6"
-          placeholder="Tối thiểu 6 ký tự"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.newPasswordPlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Xác nhận mật khẩu mới</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.confirmPassword') }}</label>
         <input
           v-model="confirmPassword"
           type="password"
           required
           minlength="6"
-          placeholder="Nhập lại mật khẩu mới"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.confirmPasswordPlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <button
         type="submit"
         :disabled="loading"
-        class="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs rounded-xl shadow-sm transition disabled:opacity-50 flex items-center justify-center space-x-2"
+        class="w-full py-2.5 px-4 bg-amberbrown-500 hover:bg-amberbrown-600 text-white font-semibold text-xs rounded-xl shadow-sm transition disabled:opacity-50 flex items-center justify-center space-x-2"
       >
         <div v-if="loading" class="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent"></div>
-        <span>{{ loading ? 'Đang xác minh...' : 'Lưu mật khẩu mới' }}</span>
+        <span>{{ loading ? t('auth.resetting') : t('auth.resetBtn') }}</span>
       </button>
     </form>
 
-    <div class="mt-6 pt-6 border-t border-slate-100 text-center">
-      <router-link to="/dang-nhap" class="text-xs text-slate-600 hover:text-slate-900 font-medium transition">
-        Quay lại màn hình đăng nhập
+    <div class="mt-6 pt-6 border-t border-beige-200 dark:border-darkbeige-800 text-center">
+      <router-link to="/dang-nhap" class="text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 font-medium transition">
+        {{ t('auth.backToLogin') }}
       </router-link>
     </div>
   </div>
@@ -103,8 +100,11 @@
 
 <script setup>
 import { ref } from 'vue';
-import { KeyRound, AlertCircle } from 'lucide-vue-next';
+import { useI18n } from 'vue-i18n';
+import { AlertCircle } from 'lucide-vue-next';
 import apiClient from '../../api/client';
+
+const { t } = useI18n();
 
 const email = ref('');
 const phone = ref('');
@@ -117,23 +117,25 @@ const loading = ref(false);
 
 const handleResetPassword = async () => {
   errorMessage.value = '';
+  successMessage.value = '';
+
   if (newPassword.value !== confirmPassword.value) {
-    errorMessage.value = 'Mật khẩu mới và xác nhận mật khẩu không trùng khớp.';
+    errorMessage.value = t('errors.VALIDATION_ERROR');
     return;
   }
 
   loading.value = true;
   try {
-    const res = await apiClient.post('/guest/forgot-password', {
+    const res = await apiClient.post('/guest/reset-password', {
       email: email.value,
-      sdt: phone.value,
+      so_dien_thoai: phone.value,
       ho_ten: fullName.value,
       mat_khau_moi: newPassword.value
     });
 
-    successMessage.value = res?.message || res?.data?.message || 'Mật khẩu của quý khách đã được cập nhật thành công. Quý khách có thể đăng nhập ngay.';
+    successMessage.value = res?.message || t('auth.resetSuccess');
   } catch (err) {
-    errorMessage.value = err.response?.data?.detail || err.message || 'Thông tin không khớp. Quý khách vui lòng kiểm tra lại họ tên, email và số điện thoại.';
+    errorMessage.value = err.detail || err.message || t('errors.VALIDATION_ERROR');
   } finally {
     loading.value = false;
   }

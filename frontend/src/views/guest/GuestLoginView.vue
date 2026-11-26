@@ -1,36 +1,33 @@
 <template>
-  <div class="max-w-md mx-auto my-12 bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm">
+  <div class="max-w-md mx-auto my-12 bg-white dark:bg-darkbeige-850 p-8 rounded-2xl border border-beige-300 dark:border-darkbeige-800 shadow-sm transition-colors">
     <div class="text-center mb-8">
-      <div class="w-12 h-12 bg-sky-50 text-sky-700 rounded-xl mx-auto flex items-center justify-center mb-3 border border-sky-100">
-        <UserCircle2 class="w-6 h-6" />
-      </div>
-      <h2 class="text-2xl font-semibold text-slate-900 tracking-tight">Chào mừng quý khách</h2>
-      <p class="text-xs text-slate-500 mt-1">Đăng nhập tài khoản thành viên Khách sạn Sài Gòn Star</p>
+      <h2 class="font-display font-bold text-3xl text-stone-900 dark:text-white tracking-tight">{{ t('auth.loginTitle') }}</h2>
+      <p class="text-xs text-stone-500 dark:text-stone-400 mt-1.5">{{ t('auth.loginSubtitle') }}</p>
     </div>
 
     <form @submit.prevent="handleLogin" class="space-y-4">
-      <div v-if="errorMessage" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center space-x-2">
+      <div v-if="errorMessage" class="p-3.5 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs rounded-xl flex items-center space-x-2">
         <AlertCircle class="w-4 h-4 flex-shrink-0" />
         <span>{{ errorMessage }}</span>
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Email hoặc Số điện thoại</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.account') }}</label>
         <input
           v-model="account"
           type="text"
           required
           autocomplete="username"
-          placeholder="Ví dụ: khachhang@email.com hoặc 0901234567"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.accountPlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <div>
         <div class="flex items-center justify-between mb-1.5">
-          <label class="block text-xs font-medium text-slate-700">Mật khẩu</label>
-          <router-link to="/quen-mat-khau" class="text-xs text-sky-600 hover:text-sky-700 font-medium transition">
-            Quên mật khẩu?
+          <label class="block text-xs font-medium text-stone-700 dark:text-stone-300">{{ t('auth.password') }}</label>
+          <router-link to="/quen-mat-khau" class="text-xs text-amberbrown-600 dark:text-amberbrown-400 hover:text-amberbrown-700 dark:hover:text-amberbrown-300 font-medium transition">
+            {{ t('auth.forgotPasswordLink') }}
           </router-link>
         </div>
         <input
@@ -38,26 +35,26 @@
           type="password"
           required
           autocomplete="current-password"
-          placeholder="Nhập mật khẩu của quý khách"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.passwordPlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <button
         type="submit"
         :disabled="loading"
-        class="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs rounded-xl shadow-sm transition disabled:opacity-50 flex items-center justify-center space-x-2"
+        class="w-full py-2.5 px-4 bg-amberbrown-500 hover:bg-amberbrown-600 text-white font-semibold text-xs rounded-xl shadow-sm transition disabled:opacity-50 flex items-center justify-center space-x-2"
       >
         <div v-if="loading" class="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent"></div>
-        <span>{{ loading ? 'Đang kiểm tra...' : 'Đăng nhập' }}</span>
+        <span>{{ loading ? t('auth.loggingIn') : t('auth.loginBtn') }}</span>
       </button>
     </form>
 
-    <div class="mt-6 pt-6 border-t border-slate-100 text-center">
-      <p class="text-xs text-slate-500">
-        Quý khách chưa có tài khoản?
-        <router-link to="/dang-ky" class="text-sky-600 hover:text-sky-700 font-semibold ml-1 transition">
-          Đăng ký thành viên
+    <div class="mt-6 pt-6 border-t border-beige-200 dark:border-darkbeige-800 text-center">
+      <p class="text-xs text-stone-500 dark:text-stone-400">
+        {{ t('auth.noAccount') }}
+        <router-link to="/dang-ky" class="text-amberbrown-600 dark:text-amberbrown-400 hover:text-amberbrown-700 dark:hover:text-amberbrown-300 font-semibold ml-1 transition">
+          {{ t('auth.registerNow') }}
         </router-link>
       </p>
     </div>
@@ -67,10 +64,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { UserCircle2, AlertCircle } from 'lucide-vue-next';
+import { useI18n } from 'vue-i18n';
+import { AlertCircle } from 'lucide-vue-next';
 import apiClient from '../../api/client';
 import { useGuestAuthStore } from '../../stores/guestAuth';
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const guestAuth = useGuestAuthStore();
@@ -96,10 +95,10 @@ const handleLogin = async () => {
       const redirectPath = route.query.redirect || '/chuyen-di-cua-toi';
       router.push(redirectPath);
     } else {
-      throw new Error('Dữ liệu đăng nhập không hợp lệ');
+      throw new Error(t('errors.AUTH_INVALID_CREDENTIALS'));
     }
   } catch (err) {
-    errorMessage.value = err.response?.data?.detail || err.message || 'Thông tin đăng nhập chưa chính xác. Xin quý khách kiểm tra lại.';
+    errorMessage.value = err.detail || err.message || t('errors.AUTH_INVALID_CREDENTIALS');
   } finally {
     loading.value = false;
   }

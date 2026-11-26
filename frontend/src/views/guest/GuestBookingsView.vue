@@ -1,25 +1,25 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-beige-300 dark:border-darkbeige-800">
       <div>
-        <h1 class="text-xl font-semibold text-slate-900 tracking-tight">Chuyến đi của quý khách</h1>
-        <p class="text-xs text-slate-500 mt-1">Danh sách phòng đã đặt và lịch sử lưu trú tại Khách sạn Sài Gòn Star</p>
+        <h1 class="font-display font-bold text-2xl text-stone-900 dark:text-white tracking-tight">{{ t('myTrips.title') }}</h1>
+        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">{{ t('myTrips.subtitle') }}</p>
       </div>
 
       <div class="flex items-center space-x-3">
         <router-link
           to="/"
-          class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-medium rounded-xl shadow-sm transition flex items-center space-x-1.5"
+          class="px-4 py-2 bg-amberbrown-500 hover:bg-amberbrown-600 text-white text-xs font-semibold rounded-xl shadow-sm transition flex items-center space-x-1.5"
         >
           <Plus class="w-3.5 h-3.5" />
-          <span>Đặt thêm phòng</span>
+          <span>{{ t('myTrips.bookMore') }}</span>
         </router-link>
         <button
           @click="fetchBookings"
           :disabled="loading"
-          class="p-2 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-xl transition"
-          title="Làm mới danh sách"
+          class="p-2 border border-beige-300 dark:border-darkbeige-700 hover:bg-beige-200/60 dark:hover:bg-darkbeige-800 text-stone-600 dark:text-stone-300 rounded-xl transition"
+          :title="t('myTrips.refresh')"
         >
           <RotateCw class="w-4 h-4" :class="{ 'animate-spin': loading }" />
         </button>
@@ -27,32 +27,32 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="py-16 text-center text-slate-400">
-      <div class="animate-spin rounded-full h-8 w-8 border-2 border-sky-600 border-t-transparent mx-auto mb-3"></div>
-      <p class="text-xs">Đang tải thông tin chuyến đi...</p>
+    <div v-if="loading" class="py-16 text-center text-stone-400">
+      <div class="animate-spin rounded-full h-8 w-8 border-2 border-amberbrown-500 border-t-transparent mx-auto mb-3"></div>
+      <p class="text-xs">{{ t('myTrips.loading') }}</p>
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs flex items-center space-x-3">
+    <div v-else-if="error" class="p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 rounded-2xl text-xs flex items-center space-x-3">
       <AlertCircle class="w-5 h-5 flex-shrink-0" />
       <span>{{ error }}</span>
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="bookings.length === 0" class="py-16 text-center bg-white rounded-2xl border border-slate-200/80 p-8 space-y-3">
-      <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 mx-auto flex items-center justify-center border border-slate-100">
+    <div v-else-if="bookings.length === 0" class="py-16 text-center bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-8 space-y-3">
+      <div class="w-12 h-12 rounded-2xl bg-beige-100 dark:bg-darkbeige-800 text-stone-400 mx-auto flex items-center justify-center border border-beige-200 dark:border-darkbeige-700">
         <CalendarX2 class="w-6 h-6" />
       </div>
-      <h3 class="text-sm font-semibold text-slate-800">Quý khách chưa có chuyến đi nào</h3>
-      <p class="text-xs text-slate-500 max-w-sm mx-auto">
-        Khám phá các hạng phòng sang trọng tại Sài Gòn Star và tận hưởng kỳ nghỉ trọn vẹn ngay hôm nay.
+      <h3 class="font-display font-semibold text-base text-stone-900 dark:text-white">{{ t('myTrips.emptyTitle') }}</h3>
+      <p class="text-xs text-stone-500 dark:text-stone-400 max-w-sm mx-auto leading-relaxed">
+        {{ t('myTrips.emptySubtitle') }}
       </p>
       <div class="pt-2">
         <router-link
           to="/"
-          class="inline-block px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-medium rounded-xl transition shadow-sm"
+          class="inline-block px-4 py-2 bg-amberbrown-500 hover:bg-amberbrown-600 text-white text-xs font-semibold rounded-xl transition shadow-sm"
         >
-          Tìm kiếm phòng ngay
+          {{ t('myTrips.searchNow') }}
         </router-link>
       </div>
     </div>
@@ -62,62 +62,61 @@
       <div
         v-for="b in bookings"
         :key="b.dat_phong_id"
-        class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:border-slate-300 transition"
+        class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 overflow-hidden shadow-sm hover:border-amberbrown-500/40 transition"
       >
         <div class="p-5 sm:p-6 space-y-4">
-          <!-- Top Row: Code & Status Badge -->
+          <!-- Top Row: Code & Status Badge (Clean, No decorative dots) -->
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center space-x-3">
-              <span class="text-xs font-mono font-bold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+              <span class="text-xs font-mono font-bold text-stone-900 dark:text-stone-100 bg-beige-200/70 dark:bg-darkbeige-800 px-2.5 py-1 rounded-lg border border-beige-300 dark:border-darkbeige-700">
                 {{ b.ma_tra_cuu }}
               </span>
-              <span class="text-xs font-medium text-slate-500">
+              <span class="text-xs font-medium text-stone-500 dark:text-stone-400">
                 {{ formatDateTime(b.ngay_tao) }}
               </span>
             </div>
 
-            <!-- Natural Friendly Status Badge -->
+            <!-- Natural Friendly Status Badge - Dot Removed per unslop & user request -->
             <span
-              class="px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center space-x-1.5"
+              class="px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center"
               :class="getStatusStyle(b.trang_thai)"
             >
-              <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-              <span>{{ getStatusLabel(b.trang_thai) }}</span>
+              {{ getStatusLabel(b.trang_thai) }}
             </span>
           </div>
 
           <!-- Middle Row: Stay Details & Room Info -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-slate-100">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-beige-200 dark:border-darkbeige-800">
             <div>
-              <p class="text-[11px] font-medium text-slate-400">Hạng phòng & Số phòng</p>
-              <p class="text-xs font-semibold text-slate-800 mt-0.5">
-                {{ b.ten_hang || b.ma_hang || 'Phòng nghỉ' }}
-                <span v-if="b.so_phong" class="ml-1 text-sky-700 font-bold bg-sky-50 px-1.5 py-0.5 rounded text-[10px]">
-                  Phòng {{ b.so_phong }}
+              <p class="text-[11px] font-medium text-stone-400 dark:text-stone-500">{{ t('myTrips.roomAndNumber') }}</p>
+              <p class="text-xs font-semibold text-stone-800 dark:text-stone-200 mt-0.5">
+                {{ b.ten_hang || b.ma_hang || t('myTrips.roomFallback') }}
+                <span v-if="b.so_phong" class="ml-1 text-amberbrown-700 dark:text-amberbrown-300 font-bold bg-amberbrown-50 dark:bg-darkbeige-800 px-1.5 py-0.5 rounded text-[10px]">
+                  {{ t('myTrips.roomPrefix') }} {{ b.so_phong }}
                 </span>
-                <span v-else class="text-slate-400 font-normal text-[11px] ml-1">(Chờ xếp phòng)</span>
+                <span v-else class="text-stone-400 dark:text-stone-500 font-normal text-[11px] ml-1">{{ t('myTrips.waitingRoom') }}</span>
               </p>
             </div>
 
             <div>
-              <p class="text-[11px] font-medium text-slate-400">Thời gian lưu trú</p>
-              <p class="text-xs font-medium text-slate-800 mt-0.5">
-                {{ formatDateTime(b.tu_luc) }} → {{ formatDateTime(b.den_luc) }}
+              <p class="text-[11px] font-medium text-stone-400 dark:text-stone-500">{{ t('myTrips.stayDuration') }}</p>
+              <p class="text-xs font-medium text-stone-800 dark:text-stone-200 mt-0.5">
+                {{ formatDateTime(b.tu_luc) }} - {{ formatDateTime(b.den_luc) }}
               </p>
             </div>
 
             <div>
-              <p class="text-[11px] font-medium text-slate-400">Tổng tiền thanh toán</p>
-              <p class="text-sm font-bold text-slate-900 mt-0.5">
+              <p class="text-[11px] font-medium text-stone-400 dark:text-stone-500">{{ t('myTrips.totalPayment') }}</p>
+              <p class="text-sm font-bold text-stone-900 dark:text-white mt-0.5">
                 {{ formatVND(b.tong_tien) }}
               </p>
             </div>
           </div>
 
           <!-- Actions Row -->
-          <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-            <p class="text-[11px] text-slate-400">
-              Số khách lưu trú: <strong class="text-slate-700 font-medium">{{ b.so_khach }} người</strong>
+          <div class="pt-3 border-t border-beige-200 dark:border-darkbeige-800 flex flex-wrap items-center justify-between gap-3">
+            <p class="text-[11px] text-stone-500 dark:text-stone-400">
+              {{ t('bookingDetail.guests') }}: <strong class="text-stone-700 dark:text-stone-200 font-medium">{{ b.so_khach }}</strong>
             </p>
 
             <div class="flex items-center space-x-2">
@@ -125,17 +124,17 @@
               <router-link
                 v-if="b.trang_thai === 'HOLD'"
                 :to="`/giu-cho/${b.ma_tra_cuu}`"
-                class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition shadow-sm"
+                class="px-3.5 py-1.5 bg-amberbrown-500 hover:bg-amberbrown-600 text-white text-xs font-medium rounded-xl transition shadow-sm"
               >
-                Thanh toán ngay
+                {{ t('myTrips.payNow') }}
               </router-link>
 
               <!-- View details / Lookup -->
               <router-link
                 :to="`/don/${b.ma_tra_cuu}`"
-                class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-medium rounded-lg transition"
+                class="px-3.5 py-1.5 bg-beige-200/70 hover:bg-beige-300 dark:bg-darkbeige-800 dark:hover:bg-darkbeige-700 text-stone-800 dark:text-stone-200 text-xs font-medium rounded-xl transition"
               >
-                Xem chi tiết & Hủy phòng
+                {{ t('myTrips.viewDetail') }}
               </router-link>
             </div>
           </div>
@@ -147,10 +146,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { Plus, RotateCw, CalendarX2, AlertCircle } from 'lucide-vue-next';
 import apiClient from '../../api/client';
 import { useGuestAuthStore } from '../../stores/guestAuth';
 
+const { t, te } = useI18n();
 const guestAuth = useGuestAuthStore();
 
 const bookings = ref([]);
@@ -160,7 +161,7 @@ const error = ref('');
 const fetchBookings = async () => {
   const token = guestAuth.token || localStorage.getItem('guest_token');
   if (!token) {
-    error.value = 'Phiên đăng nhập đã hết hạn. Quý khách vui lòng đăng nhập lại để xem chuyến đi.';
+    error.value = t('myTrips.authRequired');
     return;
   }
   loading.value = true;
@@ -171,7 +172,7 @@ const fetchBookings = async () => {
     });
     bookings.value = Array.isArray(res) ? res : (res?.data || []);
   } catch (err) {
-    error.value = err.detail || err.message || 'Không thể tải danh sách chuyến đi. Xin quý khách vui lòng thử lại.';
+    error.value = err.detail || err.message || t('myTrips.errorLoad');
   } finally {
     loading.value = false;
   }
@@ -196,31 +197,32 @@ const formatDateTime = (isoStr) => {
 
 const getStatusLabel = (st) => {
   switch (st) {
-    case 'HOLD': return 'Đang giữ phòng 15 phút';
-    case 'CONFIRMED': return 'Đã xác nhận thành công';
-    case 'CHECKED_IN': return 'Đang lưu trú tại khách sạn';
-    case 'CHECKED_OUT': return 'Đã hoàn tất trả phòng';
-    case 'CANCELLED': return 'Đã hủy chuyến đi';
-    case 'NO_SHOW': return 'Không đến nhận phòng';
-    case 'EXPIRED': return 'Đã hết hạn giữ phòng';
-    default: return st;
+    case 'HOLD': return t('myTrips.statusHold');
+    case 'CONFIRMED': return t('myTrips.statusConfirmed');
+    case 'CHECKED_IN': return t('myTrips.statusCheckedIn');
+    case 'CHECKED_OUT': return t('myTrips.statusCheckedOut');
+    case 'CANCELLED': return t('myTrips.statusCancelled');
+    case 'NO_SHOW': return t('myTrips.statusNoShow');
+    case 'EXPIRED': return t('myTrips.statusExpired');
+    default:
+      return te(`status.${st}`) ? t(`status.${st}`) : st;
   }
 };
 
 const getStatusStyle = (st) => {
   switch (st) {
     case 'HOLD':
-      return 'bg-amber-50 text-amber-800 border border-amber-200';
+      return 'bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-950/40 dark:text-amber-200 dark:border-amber-800';
     case 'CONFIRMED':
-      return 'bg-sky-50 text-sky-800 border border-sky-200';
+      return 'bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-800';
     case 'CHECKED_IN':
-      return 'bg-emerald-50 text-emerald-800 border border-emerald-200';
+      return 'bg-teal-100 text-teal-800 border border-teal-300 dark:bg-teal-950/40 dark:text-teal-200 dark:border-teal-800';
     case 'CHECKED_OUT':
-      return 'bg-slate-100 text-slate-700 border border-slate-200';
+      return 'bg-stone-100 text-stone-700 border border-stone-300 dark:bg-darkbeige-800 dark:text-stone-300 dark:border-darkbeige-700';
     case 'CANCELLED':
-      return 'bg-rose-50 text-rose-800 border border-rose-200';
+      return 'bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-950/40 dark:text-rose-200 dark:border-rose-800';
     default:
-      return 'bg-slate-50 text-slate-600 border border-slate-200';
+      return 'bg-stone-100 text-stone-600 border border-stone-300 dark:bg-darkbeige-800 dark:text-stone-400 dark:border-darkbeige-700';
   }
 };
 

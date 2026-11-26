@@ -48,7 +48,7 @@
           <button
             @click="themeStore.toggleTheme"
             class="p-2 text-stone-600 dark:text-stone-300 hover:bg-beige-200/60 dark:hover:bg-darkbeige-800 rounded-xl border border-beige-300 dark:border-darkbeige-800 transition"
-            :title="themeStore.isDark ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối'"
+            :title="themeStore.isDark ? (locale === 'vi' ? 'Chuyển sang giao diện Sáng' : 'Switch to Light mode') : (locale === 'vi' ? 'Chuyển sang giao diện Tối' : 'Switch to Dark mode')"
           >
             <Sun v-if="themeStore.isDark" class="w-4 h-4 text-amber-400" />
             <Moon v-else class="w-4 h-4 text-stone-600" />
@@ -105,17 +105,6 @@
               </router-link>
             </div>
           </template>
-
-          <!-- Discreet Internal Staff Portal Link -->
-          <a
-            href="http://127.0.0.1:5174/dang-nhap"
-            target="_blank"
-            class="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 text-[11px] font-medium text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-beige-200/60 dark:hover:bg-darkbeige-800 border border-beige-300 dark:border-darkbeige-800 rounded-xl transition"
-            title="Dành riêng cho nhân viên khách sạn"
-          >
-            <Building2 class="w-3.5 h-3.5" />
-            <span>Nội bộ</span>
-          </a>
         </div>
       </div>
     </header>
@@ -132,7 +121,7 @@
           <Star class="w-4 h-4 fill-amberbrown-500 text-amberbrown-500" />
           <span class="font-display font-bold text-sm">SaigonStar</span>
         </div>
-        <p class="text-xs text-stone-500 dark:text-stone-400">Địa chỉ: 123 Đường Nguyễn Thị Minh Khai, Quận 1, TP. Hồ Chí Minh</p>
+        <p class="text-xs text-stone-500 dark:text-stone-400">{{ t('footer.address') }}</p>
         <p class="text-[11px] text-stone-400 dark:text-stone-500 pt-1">
           {{ t('footer.tagline') }}
         </p>
@@ -145,7 +134,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { Star, User, Building2, Sun, Moon } from 'lucide-vue-next';
+import { Star, User, Sun, Moon } from 'lucide-vue-next';
 import { useGuestAuthStore } from '../stores/guestAuth';
 import { useAuthStore } from '../stores/auth';
 import { useThemeStore } from '../stores/theme';

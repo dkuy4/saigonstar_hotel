@@ -12,7 +12,7 @@
         <div>
           <h2 class="text-base font-black text-slate-900">🔄 Đổi phòng do sự cố</h2>
           <p class="text-xs text-slate-500 mt-0.5">
-            Phòng cũ → Bảo trì · Giá đơn giữ nguyên (BR-36)
+            Phòng cũ → Bảo trì - Giá đơn giữ nguyên (BR-36)
           </p>
         </div>
         <button

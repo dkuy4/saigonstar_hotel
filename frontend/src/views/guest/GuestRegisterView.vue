@@ -1,79 +1,76 @@
 <template>
-  <div class="max-w-md mx-auto my-12 bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm">
+  <div class="max-w-md mx-auto my-12 bg-white dark:bg-darkbeige-850 p-8 rounded-2xl border border-beige-300 dark:border-darkbeige-800 shadow-sm transition-colors">
     <div class="text-center mb-8">
-      <div class="w-12 h-12 bg-amber-50 text-amber-700 rounded-xl mx-auto flex items-center justify-center mb-3 border border-amber-100">
-        <Sparkles class="w-6 h-6" />
-      </div>
-      <h2 class="text-2xl font-semibold text-slate-900 tracking-tight">Đăng ký thành viên</h2>
-      <p class="text-xs text-slate-500 mt-1">Lưu trữ chuyến đi và quản lý phòng đã đặt dễ dàng</p>
+      <h2 class="font-display font-bold text-3xl text-stone-900 dark:text-white tracking-tight">{{ t('auth.registerTitle') }}</h2>
+      <p class="text-xs text-stone-500 dark:text-stone-400 mt-1.5">{{ t('auth.registerSubtitle') }}</p>
     </div>
 
     <form @submit.prevent="handleRegister" class="space-y-4">
-      <div v-if="errorMessage" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center space-x-2">
+      <div v-if="errorMessage" class="p-3.5 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-300 text-xs rounded-xl flex items-center space-x-2">
         <AlertCircle class="w-4 h-4 flex-shrink-0" />
         <span>{{ errorMessage }}</span>
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Họ và tên</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.fullName') }}</label>
         <input
           v-model="fullName"
           type="text"
           required
-          placeholder="Ví dụ: Nguyễn Văn An"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.fullNamePlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Số điện thoại liên hệ</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.phone') }}</label>
         <input
           v-model="phone"
           type="tel"
           required
-          placeholder="Ví dụ: 0912345678"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.phonePlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Địa chỉ Email</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.email') }}</label>
         <input
           v-model="email"
           type="email"
           required
-          placeholder="Ví dụ: ban@email.com"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.emailPlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1.5">Mật khẩu</label>
+        <label class="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">{{ t('auth.password') }}</label>
         <input
           v-model="password"
           type="password"
           required
           minlength="6"
-          placeholder="Tối thiểu 6 ký tự"
-          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 outline-none transition"
+          :placeholder="t('auth.newPasswordPlaceholder')"
+          class="w-full px-3.5 py-2.5 bg-beige-50/50 dark:bg-darkbeige-900 border border-beige-300 dark:border-darkbeige-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 focus:bg-white dark:focus:bg-darkbeige-800 focus:ring-2 focus:ring-amberbrown-500 outline-none transition"
         />
       </div>
 
       <button
         type="submit"
         :disabled="loading"
-        class="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs rounded-xl shadow-sm transition disabled:opacity-50 flex items-center justify-center space-x-2"
+        class="w-full py-2.5 px-4 bg-amberbrown-500 hover:bg-amberbrown-600 text-white font-semibold text-xs rounded-xl shadow-sm transition disabled:opacity-50 flex items-center justify-center space-x-2"
       >
         <div v-if="loading" class="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent"></div>
-        <span>{{ loading ? 'Đang tạo tài khoản...' : 'Tạo tài khoản' }}</span>
+        <span>{{ loading ? t('auth.registering') : t('auth.registerBtn') }}</span>
       </button>
     </form>
 
-    <div class="mt-6 pt-6 border-t border-slate-100 text-center">
-      <p class="text-xs text-slate-500">
-        Quý khách đã có tài khoản?
-        <router-link to="/dang-nhap" class="text-sky-600 hover:text-sky-700 font-semibold ml-1 transition">
-          Đăng nhập ngay
+    <div class="mt-6 pt-6 border-t border-beige-200 dark:border-darkbeige-800 text-center">
+      <p class="text-xs text-stone-500 dark:text-stone-400">
+        {{ t('auth.haveAccount') }}
+        <router-link to="/dang-nhap" class="text-amberbrown-600 dark:text-amberbrown-400 hover:text-amberbrown-700 dark:hover:text-amberbrown-300 font-semibold ml-1 transition">
+          {{ t('auth.loginNow') }}
         </router-link>
       </p>
     </div>
@@ -83,10 +80,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Sparkles, AlertCircle } from 'lucide-vue-next';
+import { useI18n } from 'vue-i18n';
+import { AlertCircle } from 'lucide-vue-next';
 import apiClient from '../../api/client';
 import { useGuestAuthStore } from '../../stores/guestAuth';
 
+const { t } = useI18n();
 const router = useRouter();
 const guestAuth = useGuestAuthStore();
 
@@ -103,11 +102,9 @@ const handleRegister = async () => {
   try {
     const res = await apiClient.post('/guest/register', {
       ho_ten: fullName.value,
-      sdt: phone.value,
+      so_dien_thoai: phone.value,
       email: email.value,
-      mat_khau: password.value,
-      quoc_tich: 'VNM',
-      ngon_ngu: 'vi'
+      mat_khau: password.value
     });
 
     const token = res?.access_token || res?.data?.access_token;
@@ -116,10 +113,10 @@ const handleRegister = async () => {
       guestAuth.setAuth(token, user);
       router.push('/chuyen-di-cua-toi');
     } else {
-      throw new Error('Dữ liệu phản hồi không hợp lệ');
+      router.push('/dang-nhap');
     }
   } catch (err) {
-    errorMessage.value = err.response?.data?.detail || err.message || 'Không thể tạo tài khoản. Xin quý khách kiểm tra lại thông tin.';
+    errorMessage.value = err.detail || err.message || t('errors.VALIDATION_ERROR');
   } finally {
     loading.value = false;
   }
