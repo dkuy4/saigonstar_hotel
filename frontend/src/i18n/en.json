@@ -118,7 +118,29 @@
     "dailyPrice": "Daily rate",
     "hourlyPrice": "Hourly rate",
     "perNight": " / night",
-    "perHour": " / hour"
+    "perHour": " / hour",
+    "usp": {
+      "locationTitle": "Central District 1 Location",
+      "locationDesc": "Situated on Nguyen Thi Minh Khai Street, offering easy access to landmarks and business hubs.",
+      "priceTitle": "Transparent Direct Rates",
+      "priceDesc": "Book directly with no hidden intermediary fees - taxes and charges are shown upfront.",
+      "supportTitle": "24/7 Front Desk",
+      "supportDesc": "Our reception team is available around the clock for late check-ins and guest requests.",
+      "checkinTitle": "Streamlined Check-in",
+      "checkinDesc": "Instant booking confirmation via email and lookup code, reducing wait time at the lobby."
+    },
+    "nearby": {
+      "title": "Explore Around SaigonStar",
+      "subtitle": "Travel distances from the hotel to notable landmarks in Ho Chi Minh City",
+      "place1Name": "Tao Dan Park",
+      "place1Dist": "3 min walk",
+      "place2Name": "Independence Palace",
+      "place2Dist": "5 min drive",
+      "place3Name": "Notre-Dame Cathedral",
+      "place3Dist": "6 min drive",
+      "place4Name": "Ben Thanh Market",
+      "place4Dist": "7 min drive"
+    }
   },
   "footer": {
     "copyright": "© 2026 SaigonStar. All rights reserved.",

@@ -118,7 +118,29 @@
     "dailyPrice": "Giá theo ngày",
     "hourlyPrice": "Giá theo giờ",
     "perNight": " / đêm",
-    "perHour": " / giờ"
+    "perHour": " / giờ",
+    "usp": {
+      "locationTitle": "Vị trí trung tâm Quận 1",
+      "locationDesc": "Nằm ngay trục đường Nguyễn Thị Minh Khai, thuận tiện di chuyển đến các điểm tham quan và khu thương mại.",
+      "priceTitle": "Giá trực tiếp minh bạch",
+      "priceDesc": "Đặt phòng trực tiếp không qua trung gian, hiển thị rõ ràng thuế phí ngay từ bước tìm kiếm.",
+      "supportTitle": "Lễ tân phục vụ 24/7",
+      "supportDesc": "Đội ngũ nhân viên túc trực ngày đêm, sẵn sàng hỗ trợ nhận phòng muộn hoặc yêu cầu phát sinh.",
+      "checkinTitle": "Thủ tục nhanh gọn",
+      "checkinDesc": "Xác nhận đặt phòng tức thì qua email và mã tra cứu, tiết kiệm thời gian chờ đợi tại sảnh."
+    },
+    "nearby": {
+      "title": "Khám phá xung quanh SaigonStar",
+      "subtitle": "Khoảng cách di chuyển từ khách sạn đến các địa điểm nổi bật tại TP. Hồ Chí Minh",
+      "place1Name": "Công viên Tao Đàn",
+      "place1Dist": "3 phút đi bộ",
+      "place2Name": "Dinh Độc Lập",
+      "place2Dist": "5 phút đi xe",
+      "place3Name": "Nhà thờ Đức Bà",
+      "place3Dist": "6 phút đi xe",
+      "place4Name": "Chợ Bến Thành",
+      "place4Dist": "7 phút đi xe"
+    }
   },
   "footer": {
     "copyright": "© 2026 SaigonStar. Toàn bộ quyền được bảo lưu.",

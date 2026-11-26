@@ -1,12 +1,12 @@
 <template>
-  <div class="space-y-10">
+  <div class="space-y-12">
     <!-- Hero Banner with Integrated Search -->
     <div class="relative rounded-3xl overflow-hidden bg-stone-950 text-white shadow-2xl">
       <!-- Background Image with Overlay -->
       <div class="absolute inset-0 z-0 opacity-40">
         <img
           src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1600&q=80"
-          alt="Hotel Luxury"
+          alt="SaigonStar Hotel"
           class="w-full h-full object-cover"
         />
       </div>
@@ -29,6 +29,33 @@
         <div class="pt-6 text-left">
           <SearchBox />
         </div>
+      </div>
+    </div>
+
+    <!-- 4-Column USP Strip (Quiet Chrome, Monochrome Icons, No Hover Slop) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-5 space-y-2 transition-colors">
+        <MapPin class="w-5 h-5 text-amberbrown-500" />
+        <h4 class="font-display font-bold text-sm text-stone-900 dark:text-white">{{ t('home.usp.locationTitle') }}</h4>
+        <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">{{ t('home.usp.locationDesc') }}</p>
+      </div>
+
+      <div class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-5 space-y-2 transition-colors">
+        <ShieldCheck class="w-5 h-5 text-amberbrown-500" />
+        <h4 class="font-display font-bold text-sm text-stone-900 dark:text-white">{{ t('home.usp.priceTitle') }}</h4>
+        <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">{{ t('home.usp.priceDesc') }}</p>
+      </div>
+
+      <div class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-5 space-y-2 transition-colors">
+        <Clock class="w-5 h-5 text-amberbrown-500" />
+        <h4 class="font-display font-bold text-sm text-stone-900 dark:text-white">{{ t('home.usp.supportTitle') }}</h4>
+        <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">{{ t('home.usp.supportDesc') }}</p>
+      </div>
+
+      <div class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-5 space-y-2 transition-colors">
+        <CheckCircle2 class="w-5 h-5 text-amberbrown-500" />
+        <h4 class="font-display font-bold text-sm text-stone-900 dark:text-white">{{ t('home.usp.checkinTitle') }}</h4>
+        <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">{{ t('home.usp.checkinDesc') }}</p>
       </div>
     </div>
 
@@ -115,13 +142,43 @@
         </div>
       </div>
     </div>
+
+    <!-- Nearby Landmarks Section -->
+    <div class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-6 sm:p-8 space-y-6 transition-colors">
+      <div>
+        <h3 class="font-display text-2xl font-bold text-stone-900 dark:text-white tracking-tight">{{ t('home.nearby.title') }}</h3>
+        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">{{ t('home.nearby.subtitle') }}</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-4 rounded-xl bg-beige-50/70 dark:bg-darkbeige-900 border border-beige-200 dark:border-darkbeige-800 flex items-center justify-between">
+          <span class="text-xs font-semibold text-stone-800 dark:text-stone-200">{{ t('home.nearby.place1Name') }}</span>
+          <span class="text-xs font-medium text-amberbrown-600 dark:text-amberbrown-400">{{ t('home.nearby.place1Dist') }}</span>
+        </div>
+
+        <div class="p-4 rounded-xl bg-beige-50/70 dark:bg-darkbeige-900 border border-beige-200 dark:border-darkbeige-800 flex items-center justify-between">
+          <span class="text-xs font-semibold text-stone-800 dark:text-stone-200">{{ t('home.nearby.place2Name') }}</span>
+          <span class="text-xs font-medium text-amberbrown-600 dark:text-amberbrown-400">{{ t('home.nearby.place2Dist') }}</span>
+        </div>
+
+        <div class="p-4 rounded-xl bg-beige-50/70 dark:bg-darkbeige-900 border border-beige-200 dark:border-darkbeige-800 flex items-center justify-between">
+          <span class="text-xs font-semibold text-stone-800 dark:text-stone-200">{{ t('home.nearby.place3Name') }}</span>
+          <span class="text-xs font-medium text-amberbrown-600 dark:text-amberbrown-400">{{ t('home.nearby.place3Dist') }}</span>
+        </div>
+
+        <div class="p-4 rounded-xl bg-beige-50/70 dark:bg-darkbeige-900 border border-beige-200 dark:border-darkbeige-800 flex items-center justify-between">
+          <span class="text-xs font-semibold text-stone-800 dark:text-stone-200">{{ t('home.nearby.place4Name') }}</span>
+          <span class="text-xs font-medium text-amberbrown-600 dark:text-amberbrown-400">{{ t('home.nearby.place4Dist') }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Star, Clock, Users } from 'lucide-vue-next';
+import { Star, Clock, Users, MapPin, ShieldCheck, CheckCircle2 } from 'lucide-vue-next';
 import apiClient from '../api/client';
 import SearchBox from '../components/SearchBox.vue';
 import MoneyText from '../components/MoneyText.vue';

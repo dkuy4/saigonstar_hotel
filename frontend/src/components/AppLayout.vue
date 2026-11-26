@@ -2,14 +2,14 @@
   <div class="min-h-screen flex flex-col bg-beige-100 dark:bg-darkbeige-950 text-stone-900 dark:text-stone-100 antialiased font-sans transition-colors duration-200">
     <!-- Top Header for Guests (Quiet Chrome, Unslop) -->
     <header class="bg-white/95 dark:bg-darkbeige-900/95 backdrop-blur-sm border-b border-beige-300 dark:border-darkbeige-800 sticky top-0 z-30 shadow-sm transition-colors duration-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
         <!-- Logo / Brand -->
-        <router-link to="/" class="flex items-center space-x-3 text-stone-900 dark:text-white group">
-          <div class="w-9 h-9 rounded-xl bg-amberbrown-500 flex items-center justify-center text-white shadow-sm group-hover:bg-amberbrown-600 transition">
+        <router-link to="/" class="flex items-center space-x-2 sm:space-x-3 text-stone-900 dark:text-white group flex-shrink-0">
+          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amberbrown-500 flex items-center justify-center text-white shadow-sm group-hover:bg-amberbrown-600 transition">
             <Star class="w-4 h-4 fill-white" />
           </div>
           <div>
-            <h1 class="font-display font-bold text-lg leading-tight tracking-tight text-stone-900 dark:text-white">SaigonStar</h1>
+            <h1 class="font-display font-bold text-base sm:text-lg leading-tight tracking-tight text-stone-900 dark:text-white">SaigonStar</h1>
             <p class="hidden sm:block text-[11px] text-stone-500 dark:text-stone-400 font-normal">{{ t('app.subtitle') }}</p>
           </div>
         </router-link>
@@ -42,23 +42,23 @@
           </router-link>
         </nav>
 
-        <!-- Right Actions: Language Selector + Theme Toggle + Guest Account + Link to Staff Portal -->
-        <div class="flex items-center space-x-2.5">
+        <!-- Right Actions: Language Selector + Theme Toggle + Guest Account -->
+        <div class="flex items-center space-x-1.5 sm:space-x-2.5 flex-shrink-0">
           <!-- Dark / Light Mode Toggle Button -->
           <button
             @click="themeStore.toggleTheme"
-            class="p-2 text-stone-600 dark:text-stone-300 hover:bg-beige-200/60 dark:hover:bg-darkbeige-800 rounded-xl border border-beige-300 dark:border-darkbeige-800 transition"
+            class="p-1.5 sm:p-2 text-stone-600 dark:text-stone-300 hover:bg-beige-200/60 dark:hover:bg-darkbeige-800 rounded-xl border border-beige-300 dark:border-darkbeige-800 transition"
             :title="themeStore.isDark ? (locale === 'vi' ? 'Chuyển sang giao diện Sáng' : 'Switch to Light mode') : (locale === 'vi' ? 'Chuyển sang giao diện Tối' : 'Switch to Dark mode')"
           >
-            <Sun v-if="themeStore.isDark" class="w-4 h-4 text-amber-400" />
-            <Moon v-else class="w-4 h-4 text-stone-600" />
+            <Sun v-if="themeStore.isDark" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+            <Moon v-else class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-600" />
           </button>
 
           <!-- 7 Languages Selector -->
           <select
             v-model="currentLang"
             @change="changeLanguage"
-            class="bg-white dark:bg-darkbeige-800 border border-beige-300 dark:border-darkbeige-700 text-stone-700 dark:text-stone-200 text-xs rounded-xl px-2.5 py-1.5 focus:ring-2 focus:ring-amberbrown-500 outline-none"
+            class="max-w-[78px] sm:max-w-none bg-white dark:bg-darkbeige-800 border border-beige-300 dark:border-darkbeige-700 text-stone-700 dark:text-stone-200 text-[11px] sm:text-xs rounded-xl px-1.5 sm:px-2.5 py-1.5 focus:ring-2 focus:ring-amberbrown-500 outline-none truncate"
           >
             <option value="vi">🇻🇳 Tiếng Việt</option>
             <option value="en">🇬🇧 English</option>
@@ -90,16 +90,16 @@
           </template>
 
           <template v-else>
-            <div class="flex items-center space-x-1.5 border-l border-beige-300 dark:border-darkbeige-800 pl-2.5">
+            <div class="flex items-center space-x-1 sm:space-x-1.5 border-l border-beige-300 dark:border-darkbeige-800 pl-1.5 sm:pl-2.5">
               <router-link
                 to="/dang-nhap"
-                class="px-3 py-1.5 text-xs font-medium text-stone-700 dark:text-stone-200 hover:text-stone-900 dark:hover:text-white hover:bg-beige-200/60 dark:hover:bg-darkbeige-800 rounded-xl transition"
+                class="px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium text-stone-700 dark:text-stone-200 hover:text-stone-900 dark:hover:text-white hover:bg-beige-200/60 dark:hover:bg-darkbeige-800 rounded-xl transition whitespace-nowrap"
               >
                 {{ t('nav.login') }}
               </router-link>
               <router-link
                 to="/dang-ky"
-                class="px-3 py-1.5 text-xs font-semibold text-white bg-amberbrown-500 hover:bg-amberbrown-600 rounded-xl shadow-sm transition"
+                class="px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-semibold text-white bg-amberbrown-500 hover:bg-amberbrown-600 rounded-xl shadow-sm transition whitespace-nowrap"
               >
                 {{ t('nav.register') }}
               </router-link>

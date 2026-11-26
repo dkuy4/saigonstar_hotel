@@ -118,7 +118,29 @@
     "dailyPrice": "Tarifa por día",
     "hourlyPrice": "Tarifa por hora",
     "perNight": " / noche",
-    "perHour": " / hora"
+    "perHour": " / hora",
+    "usp": {
+      "locationTitle": "Ubicación Central en Distrito 1",
+      "locationDesc": "Situado en la calle Nguyen Thi Minh Khai, con fácil acceso a puntos de interés y zonas comerciales.",
+      "priceTitle": "Tarifas Directas Transparentes",
+      "priceDesc": "Reserve directamente sin intermediarios - impuestos y cargos visibles desde la búsqueda.",
+      "supportTitle": "Recepción 24/7",
+      "supportDesc": "Nuestro equipo de recepción está disponible día y noche para llegadas tardías y consultas.",
+      "checkinTitle": "Registro Ágil",
+      "checkinDesc": "Confirmación inmediata por correo y código de reserva para evitar esperas en el vestíbulo."
+    },
+    "nearby": {
+      "title": "Explora Alrededor de SaigonStar",
+      "subtitle": "Tiempos de desplazamiento desde el hotel hasta los puntos de interés de Ciudad Ho Chi Minh",
+      "place1Name": "Parque Tao Dan",
+      "place1Dist": "3 min a pie",
+      "place2Name": "Palacio de la Reunificación",
+      "place2Dist": "5 min en coche",
+      "place3Name": "Catedral de Notre-Dame",
+      "place3Dist": "6 min en coche",
+      "place4Name": "Mercado Ben Thanh",
+      "place4Dist": "7 min en coche"
+    }
   },
   "footer": {
     "copyright": "© 2026 SaigonStar. Todos los derechos reservados.",

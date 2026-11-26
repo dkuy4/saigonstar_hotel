@@ -118,7 +118,29 @@
     "dailyPrice": "宿泊料金",
     "hourlyPrice": "デイユース料金",
     "perNight": " / 泊",
-    "perHour": " / 時間"
+    "perHour": " / 時間",
+    "usp": {
+      "locationTitle": "1区中心部の好立地",
+      "locationDesc": "グエン・ティ・ミン・カイ通りに位置し、主要観光地やビジネス街へのアクセスが良好です。",
+      "priceTitle": "明瞭な直接予約料金",
+      "priceDesc": "仲介手数料なしの直接予約 - 検索時から税・サービス料を明確に表示します。",
+      "supportTitle": "24時間フロント対応",
+      "supportDesc": "フロントスタッフが24時間常駐し、深夜のチェックインやご要望に対応します。",
+      "checkinTitle": "スムーズなチェックイン",
+      "checkinDesc": "メールと照会コードによる即時予約確定で、ロビーでの待ち時間を短縮します。"
+    },
+    "nearby": {
+      "title": "SaigonStar周辺スポット",
+      "subtitle": "ホテルからホーチミン市内の主要スポットまでの所要時間",
+      "place1Name": "タオダン公園",
+      "place1Dist": "徒歩3分",
+      "place2Name": "統一会堂",
+      "place2Dist": "車で5分",
+      "place3Name": "サイゴン大教会",
+      "place3Dist": "車で6分",
+      "place4Name": "ベンタイン市場",
+      "place4Dist": "車で7分"
+    }
   },
   "footer": {
     "copyright": "© 2026 SaigonStar. All rights reserved.",

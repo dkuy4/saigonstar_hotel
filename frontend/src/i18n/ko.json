@@ -118,7 +118,29 @@
     "dailyPrice": "일박 요금",
     "hourlyPrice": "대실 요금",
     "perNight": " / 박",
-    "perHour": " / 시간"
+    "perHour": " / 시간",
+    "usp": {
+      "locationTitle": "1군 중심부 위치",
+      "locationDesc": "응우옌티민카이 거리에 위치하여 주요 명소와 비즈니스 지구로 이동이 편리합니다.",
+      "priceTitle": "투명한 직접 예약 요금",
+      "priceDesc": "중개 수수료 없는 직접 예약 - 검색 단계부터 세금과 요금을 명확히 안내합니다.",
+      "supportTitle": "24/7 프런트 데스크",
+      "supportDesc": "프런트 직원이 24시간 상주하여 늦은 체크인이나 요청 사항을 신속히 지원합니다.",
+      "checkinTitle": "간편한 체크인",
+      "checkinDesc": "이메일 및 예약 조회 코드로 즉시 확정되어 로비 대기 시간을 줄여드립니다."
+    },
+    "nearby": {
+      "title": "SaigonStar 주변 명소",
+      "subtitle": "호텔에서 호치민시 주요 명소까지의 이동 거리",
+      "place1Name": "타오단 공원",
+      "place1Dist": "도보 3분",
+      "place2Name": "통일궁",
+      "place2Dist": "차량 5분",
+      "place3Name": "노트르담 대성당",
+      "place3Dist": "차량 6분",
+      "place4Name": "벤탄 시장",
+      "place4Dist": "차량 7분"
+    }
   },
   "footer": {
     "copyright": "© 2026 SaigonStar. All rights reserved.",

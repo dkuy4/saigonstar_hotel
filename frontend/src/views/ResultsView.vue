@@ -79,20 +79,57 @@
       </button>
     </div>
 
-    <!-- Room Results List -->
-    <div v-else-if="!loading && rooms.length > 0" class="space-y-6">
-      <div class="flex items-center justify-between">
-        <h3 class="font-display text-lg font-bold text-stone-900 dark:text-white">
-          {{ t('results.title') }} ({{ rooms.length }})
-        </h3>
-        <span class="text-xs text-stone-500 dark:text-stone-400 italic">{{ t('home.showcaseSubtitle') }}</span>
-      </div>
+    <!-- Room Results List (2-Column Responsive Layout) -->
+    <div v-else-if="!loading && rooms.length > 0" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Left Sidebar: Filter & Summary -->
+      <aside class="lg:col-span-4 bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 p-5 space-y-4 lg:sticky lg:top-24 transition-colors">
+        <div class="border-b border-beige-200 dark:border-darkbeige-800 pb-3">
+          <h3 class="font-display text-lg font-bold text-stone-900 dark:text-white">
+            {{ t('results.title') }}
+          </h3>
+          <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+            {{ t('results.foundCount', { count: filteredRooms.length }) }}
+          </p>
+        </div>
 
-      <div class="grid grid-cols-1 gap-6">
+        <div class="space-y-2">
+          <button
+            type="button"
+            @click="rentalFilter = 'ALL'"
+            class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition border"
+            :class="rentalFilter === 'ALL' ? 'bg-amberbrown-500 text-white border-amberbrown-500' : 'bg-beige-50/50 dark:bg-darkbeige-900 text-stone-700 dark:text-stone-300 border-beige-200 dark:border-darkbeige-700 hover:bg-beige-100 dark:hover:bg-darkbeige-800'"
+          >
+            {{ t('results.title') }} ({{ rooms.length }})
+          </button>
+          <button
+            type="button"
+            @click="rentalFilter = 'HOURLY'"
+            class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition border"
+            :class="rentalFilter === 'HOURLY' ? 'bg-amberbrown-500 text-white border-amberbrown-500' : 'bg-beige-50/50 dark:bg-darkbeige-900 text-stone-700 dark:text-stone-300 border-beige-200 dark:border-darkbeige-700 hover:bg-beige-100 dark:hover:bg-darkbeige-800'"
+          >
+            {{ t('results.hourlyAndDaily') }}
+          </button>
+          <button
+            type="button"
+            @click="rentalFilter = 'DAILY'"
+            class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition border"
+            :class="rentalFilter === 'DAILY' ? 'bg-amberbrown-500 text-white border-amberbrown-500' : 'bg-beige-50/50 dark:bg-darkbeige-900 text-stone-700 dark:text-stone-300 border-beige-200 dark:border-darkbeige-700 hover:bg-beige-100 dark:hover:bg-darkbeige-800'"
+          >
+            {{ t('results.dailyOnly') }}
+          </button>
+        </div>
+
+        <p class="text-[11px] text-stone-500 dark:text-stone-400 pt-2 border-t border-beige-200 dark:border-darkbeige-800">
+          {{ t('home.showcaseSubtitle') }}
+        </p>
+      </aside>
+
+      <!-- Right Column: Room Cards -->
+      <div class="lg:col-span-8 grid grid-cols-1 gap-6">
         <div
-          v-for="room in rooms"
+          v-for="room in filteredRooms"
           :key="room.room_type_id"
-          class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 shadow-sm transition overflow-hidden flex flex-col lg:flex-row"
+          class="bg-white dark:bg-darkbeige-850 rounded-2xl border border-beige-300 dark:border-darkbeige-800 shadow-sm transition overflow-hidden flex flex-col md:flex-row"
         >
           <!-- Room Thumbnail / Image (Unslop: no random hover scaling) -->
           <div class="lg:w-80 h-56 lg:h-auto bg-beige-100 dark:bg-darkbeige-900 relative overflow-hidden flex-shrink-0">
@@ -203,6 +240,17 @@ const showSearchBox = ref(false);
 const loading = ref(true);
 const errorMessage = ref('');
 const rooms = ref([]);
+const rentalFilter = ref('ALL');
+
+const filteredRooms = computed(() => {
+  if (rentalFilter.value === 'HOURLY') {
+    return rooms.value.filter(r => r.hourly_allowed);
+  }
+  if (rentalFilter.value === 'DAILY') {
+    return rooms.value.filter(r => !r.hourly_allowed);
+  }
+  return rooms.value;
+});
 
 const searchType = computed(() => route.query.type || 'NGAY');
 const checkinStr = computed(() => route.query.checkin || '');

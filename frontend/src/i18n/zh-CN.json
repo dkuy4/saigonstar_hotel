@@ -118,7 +118,29 @@
     "dailyPrice": "按天计价",
     "hourlyPrice": "钟点计价",
     "perNight": " / 晚",
-    "perHour": " / 小时"
+    "perHour": " / 小时",
+    "usp": {
+      "locationTitle": "第1郡中心位置",
+      "locationDesc": "位于阮氏明开路核心地段，方便前往各大景点和商业区。",
+      "priceTitle": "透明直订价格",
+      "priceDesc": "直接预订无中间商差价 - 搜索时即清晰展示税费。",
+      "supportTitle": "24/7全天候前台",
+      "supportDesc": "前台团队全天候值守，随时协助延迟入住及各类需求。",
+      "checkinTitle": "快捷入住手续",
+      "checkinDesc": "通过邮件和查询码即时确认预订，减少大堂等候时间。"
+    },
+    "nearby": {
+      "title": "探索SaigonStar周边",
+      "subtitle": "从酒店前往胡志明市著名地标的出行时间",
+      "place1Name": "陶丹公园",
+      "place1Dist": "步行3分钟",
+      "place2Name": "统一宫",
+      "place2Dist": "车程5分钟",
+      "place3Name": "西贡圣母大教堂",
+      "place3Dist": "车程6分钟",
+      "place4Name": "滨城市场",
+      "place4Dist": "车程7分钟"
+    }
   },
   "footer": {
     "copyright": "© 2026 SaigonStar. 版权所有。",
