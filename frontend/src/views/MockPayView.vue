@@ -96,15 +96,18 @@ const route = useRoute();
 const router = useRouter();
 
 const info = ref(null);
+const signatures = ref({});
 const loading = ref(true);
 const processing = ref(false);
 const error = ref('');
 
 const fetchInfo = async () => {
   loading.value = true;
+  error.value = '';
   try {
     const res = await apiClient.get(`/payments/mock-info/${route.params.ref}`);
-    info.value = res;
+    info.value = res.info;
+    signatures.value = res.signatures || {};
   } catch (err) {
     error.value = err.message || t('mockPay.error');
   } finally {
@@ -113,17 +116,21 @@ const fetchInfo = async () => {
 };
 
 const submitPayment = async (isSuccess) => {
+  if (processing.value || !info.value) return;
   processing.value = true;
+  const sig = isSuccess ? signatures.value.success : signatures.value.fail;
+
   try {
-    const res = await apiClient.post('/payments/mock-submit', {
+    const res = await apiClient.post('/payments/callback', {
       reference_code: info.value.reference_code,
-      success: isSuccess
+      is_success: isSuccess,
+      signature: sig
     });
     router.push({
       path: '/thanh-toan/ket-qua',
       query: {
-        result: res.code,
-        booking_code: res.booking_code,
+        result: res.result,
+        code: info.value.booking_code,
         ref: info.value.reference_code
       }
     });
