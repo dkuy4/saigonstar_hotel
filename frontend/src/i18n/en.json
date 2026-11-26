@@ -1,19 +1,21 @@
 {
   "app": {
-    "name": "Saigon Star Hotel",
-    "subtitle": "Online Room Booking System"
+    "name": "SaigonStar",
+    "subtitle": "Standard Hospitality & Accommodation"
   },
   "nav": {
     "home": "Home",
     "search": "Search Rooms",
-    "lookup": "Lookup Booking",
+    "lookup": "Booking Lookup",
+    "myTrips": "My Bookings",
     "roomBoard": "Room Board",
     "bookings": "Bookings",
     "housekeeping": "Housekeeping",
     "reports": "Reports",
     "management": "Administration",
-    "login": "Staff Login",
-    "logout": "Logout"
+    "login": "Sign in",
+    "register": "Register",
+    "logout": "Sign out"
   },
   "search": {
     "title": "Find & Book Your Stay",

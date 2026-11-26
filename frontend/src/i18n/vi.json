@@ -1,18 +1,20 @@
 {
   "app": {
-    "name": "Khách sạn Sài Gòn Star",
-    "subtitle": "Hệ thống đặt phòng trực tuyến"
+    "name": "SaigonStar",
+    "subtitle": "Dịch vụ lưu trú & nghỉ dưỡng tiêu chuẩn"
   },
   "nav": {
     "home": "Trang chủ",
     "search": "Tìm phòng",
-    "lookup": "Tra cứu đơn",
+    "lookup": "Tra cứu đơn phòng",
+    "myTrips": "Chuyến đi của tôi",
     "roomBoard": "Sơ đồ phòng",
     "bookings": "Quản lý đơn",
     "housekeeping": "Buồng phòng",
     "reports": "Báo cáo",
     "management": "Quản trị",
     "login": "Đăng nhập",
+    "register": "Đăng ký",
     "logout": "Đăng xuất"
   },
   "search": {

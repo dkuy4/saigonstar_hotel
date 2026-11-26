@@ -10,7 +10,7 @@
           </div>
           <div>
             <h1 class="font-display font-bold text-lg leading-tight tracking-tight text-stone-900 dark:text-white">SaigonStar</h1>
-            <p class="text-[11px] text-stone-500 dark:text-stone-400 font-normal">Dịch vụ lưu trú & nghỉ dưỡng tiêu chuẩn</p>
+            <p class="text-[11px] text-stone-500 dark:text-stone-400 font-normal">{{ t('app.subtitle') }}</p>
           </div>
         </router-link>
 
@@ -21,7 +21,7 @@
             class="px-3 py-2 rounded-xl text-xs font-medium transition"
             :class="$route.path === '/' ? 'text-amberbrown-600 dark:text-amberbrown-300 bg-amberbrown-50 dark:bg-darkbeige-800 font-semibold' : 'text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-beige-200/50 dark:hover:bg-darkbeige-800'"
           >
-            Tìm phòng
+            {{ t('nav.search') }}
           </router-link>
 
           <router-link
@@ -30,7 +30,7 @@
             class="px-3 py-2 rounded-xl text-xs font-medium transition"
             :class="$route.path.includes('chuyen-di') ? 'text-amberbrown-600 dark:text-amberbrown-300 bg-amberbrown-50 dark:bg-darkbeige-800 font-semibold' : 'text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-beige-200/50 dark:hover:bg-darkbeige-800'"
           >
-            Chuyến đi của tôi
+            {{ t('nav.myTrips') }}
           </router-link>
 
           <router-link
@@ -38,7 +38,7 @@
             class="px-3 py-2 rounded-xl text-xs font-medium transition"
             :class="$route.path.startsWith('/don') ? 'text-amberbrown-600 dark:text-amberbrown-300 bg-amberbrown-50 dark:bg-darkbeige-800 font-semibold' : 'text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-beige-200/50 dark:hover:bg-darkbeige-800'"
           >
-            Tra cứu đơn phòng
+            {{ t('nav.lookup') }}
           </router-link>
         </nav>
 
@@ -82,9 +82,9 @@
               <button
                 @click="handleLogout"
                 class="px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 rounded-xl transition font-medium"
-                title="Đăng xuất khỏi tài khoản"
+                :title="t('nav.logout')"
               >
-                Đăng xuất
+                {{ t('nav.logout') }}
               </button>
             </div>
           </template>
@@ -95,13 +95,13 @@
                 to="/dang-nhap"
                 class="px-3 py-1.5 text-xs font-medium text-stone-700 dark:text-stone-200 hover:text-stone-900 dark:hover:text-white hover:bg-beige-200/60 dark:hover:bg-darkbeige-800 rounded-xl transition"
               >
-                Đăng nhập
+                {{ t('nav.login') }}
               </router-link>
               <router-link
                 to="/dang-ky"
                 class="px-3 py-1.5 text-xs font-semibold text-white bg-amberbrown-500 hover:bg-amberbrown-600 rounded-xl shadow-sm transition"
               >
-                Đăng ký
+                {{ t('nav.register') }}
               </router-link>
             </div>
           </template>
@@ -134,7 +134,7 @@
         </div>
         <p class="text-xs text-stone-500 dark:text-stone-400">Địa chỉ: 123 Đường Nguyễn Thị Minh Khai, Quận 1, TP. Hồ Chí Minh</p>
         <p class="text-[11px] text-stone-400 dark:text-stone-500 pt-1">
-          Hỗ trợ khách hàng 24/7 - Đặt phòng trực tuyến nhanh chóng và thuận tiện
+          {{ t('footer.tagline') }}
         </p>
       </div>
     </footer>
@@ -147,9 +147,10 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { Star, User, Building2, Sun, Moon } from 'lucide-vue-next';
 import { useGuestAuthStore } from '../stores/guestAuth';
+import { useAuthStore } from '../stores/auth';
 import { useThemeStore } from '../stores/theme';
 
-const { locale } = useI18n();
+const { t, locale } = useI18n();
 const router = useRouter();
 const guestAuth = useGuestAuthStore();
 const themeStore = useThemeStore();
@@ -159,6 +160,12 @@ const currentLang = ref(locale.value);
 const changeLanguage = () => {
   locale.value = currentLang.value;
   localStorage.setItem('hotel_lang', currentLang.value);
+  localStorage.setItem('lang', currentLang.value);
+  // Cập nhật lang trên authStore nếu có
+  try {
+    const authStore = useAuthStore();
+    authStore.setLanguage(currentLang.value);
+  } catch (e) {}
 };
 
 const handleLogout = () => {
