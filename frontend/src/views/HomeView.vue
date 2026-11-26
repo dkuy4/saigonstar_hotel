@@ -36,8 +36,8 @@
     <div class="space-y-6">
       <div class="flex items-end justify-between">
         <div>
-          <h3 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('home.showcaseTitle') }}</h3>
-          <p class="text-xs text-slate-500 mt-1">{{ t('home.showcaseSubtitle') }}</p>
+          <h3 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{{ t('home.showcaseTitle') }}</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ t('home.showcaseSubtitle') }}</p>
         </div>
       </div>
 

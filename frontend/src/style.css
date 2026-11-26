@@ -2,9 +2,196 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   BEAUTIQUE DISPLAY FONT-FACE DEFINITIONS (From Nicecy Design System)
+   ========================================================================== */
+@font-face {
+  font-family: 'Beautique Display';
+  src: url('/fonts/beautique/BeautiqueDisplay-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beautique Display';
+  src: url('/fonts/beautique/BeautiqueDisplay-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beautique Display';
+  src: url('/fonts/beautique/BeautiqueDisplay-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beautique Display';
+  src: url('/fonts/beautique/BeautiqueDisplay-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beautique Display';
+  src: url('/fonts/beautique/BeautiqueDisplay-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beautique Display';
+  src: url('/fonts/beautique/BeautiqueDisplay-Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beautique Display';
+  src: url('/fonts/beautique/BeautiqueDisplay-BoldItalic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beautique Display';
+  src: url('/fonts/beautique/BeautiqueDisplay-BlackItalic.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   GLOBAL RESET & TYPOGRAPHY ENFORCEMENT
+   Only 2 fonts permitted: Beautique Display & Be Vietnam Pro
+   ========================================================================== */
+html,
+body,
+.font-sans {
+  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --color-brand: #9C5B32;         /* Nâu da bò ấm */
+  --color-brand-hover: #844B27;   /* Nâu gỗ đậm */
+  --bg-page: #FAF6EE;             /* Be Champagne cổ điển */
+  --bg-surface: #FFFFFF;          /* Card trắng ngà */
+  --text-main: #1C1917;           /* Chữ đen than ấm */
+  --text-muted: #78716C;          /* Chữ phụ trung tính ấm */
+  --border-color: #EFE6D5;        /* Viền be tinh tế */
+}
+
+html.dark {
+  --color-brand: #BE7850;         /* Nâu da bò sáng hơn trên nền tối */
+  --color-brand-hover: #9C5B32;
+  --bg-page: #0F0E0C;             /* Nền xám be đen */
+  --bg-surface: #181714;          /* Card be than */
+  --text-main: #F5F5F4;           /* Chữ sáng ấm */
+  --text-muted: #A8A29E;          /* Chữ phụ be xám */
+  --border-color: #2D2A24;        /* Viền be tối */
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Headings automatically use Beautique Display */
+h1, h2, h3, h4, .font-display {
+  font-family: 'Beautique Display', Georgia, serif !important;
+}
+
+/* ==========================================================================
+   COLOR SYSTEM UTILITIES (Beige & Warm Amber-Brown)
+   ========================================================================== */
+.bg-amberbrown-500 { background-color: #9C5B32 !important; }
+.hover\:bg-amberbrown-600:hover { background-color: #844B27 !important; }
+.text-amberbrown-500 { color: #9C5B32 !important; }
+.text-amberbrown-600 { color: #844B27 !important; }
+.fill-amberbrown-500 { fill: #9C5B32 !important; }
+.bg-amberbrown-50 { background-color: #FBF5F1 !important; }
+.border-amberbrown-500 { border-color: #9C5B32 !important; }
+
+/* Beige ramp utilities */
+.bg-beige-50 { background-color: #FDFBF7 !important; }
+.bg-beige-100 { background-color: #FAF6EE !important; }
+.bg-beige-200 { background-color: #F3EBDD !important; }
+.border-beige-200 { border-color: #F3EBDD !important; }
+.border-beige-300 { border-color: #EFE6D5 !important; }
+.hover\:bg-beige-200\/50:hover, .hover\:bg-beige-200\/60:hover { background-color: #F3EBDD !important; }
+
+/* Dark mode beige-black utilities */
+html.dark .dark\:bg-darkbeige-950 { background-color: #0F0E0C !important; }
+html.dark .dark\:bg-darkbeige-900 { background-color: #12110F !important; }
+html.dark .dark\:bg-darkbeige-900\/95 { background-color: rgba(18, 17, 15, 0.95) !important; }
+html.dark .dark\:bg-darkbeige-850 { background-color: #181714 !important; }
+html.dark .dark\:bg-darkbeige-800 { background-color: #222019 !important; }
+html.dark .dark\:border-darkbeige-800 { border-color: #2D2A24 !important; }
+html.dark .dark\:border-darkbeige-700 { border-color: #38342C !important; }
+html.dark .dark\:text-amberbrown-300 { color: #DEAE9B !important; }
+html.dark .dark\:bg-slate-900 { background-color: #181714 !important; }
+
+/* Global dark mode surface styling for cards */
+html.dark .bg-white {
+  background-color: #181714 !important;
+  color: #F5F5F4 !important;
+  border-color: #2D2A24 !important;
+}
+
+html.dark .border-slate-200,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-100 {
+  border-color: #2D2A24 !important;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-800 {
+  color: #F5F5F4 !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: #A8A29E !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #12110F !important;
+}
+
+html.dark .bg-slate-100 {
+  background-color: #222019 !important;
+  color: #F5F5F4 !important;
+}
+
+/* Quiet Chrome scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
 }
