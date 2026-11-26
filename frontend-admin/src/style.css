@@ -222,6 +222,24 @@ tbody tr:hover {
   color: #FECDD3 !important;
 }
 
+.bg-slate-900 {
+  background-color: #9C5B32 !important;
+  color: #FFFFFF !important;
+}
+
+/* Unify primary action buttons to SaigonStar Amber-Brown */
+.bg-sky-600,
+.bg-blue-600,
+.bg-indigo-600 {
+  background-color: #9C5B32 !important;
+  color: #FFFFFF !important;
+}
+.hover\:bg-sky-700:hover,
+.hover\:bg-blue-700:hover,
+.hover\:bg-indigo-700:hover {
+  background-color: #844B27 !important;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 7px;

@@ -4,23 +4,23 @@
     :class="[
       'group relative p-3 rounded-xl border transition-all duration-150 cursor-pointer flex flex-col justify-between text-left select-none min-h-[105px]',
       isSelected
-        ? 'ring-2 ring-sky-600 shadow-sm border-sky-500 bg-sky-50/50'
-        : 'hover:border-slate-300 hover:shadow-sm bg-white border-slate-200/90',
+        ? 'ring-2 ring-amberbrown-500 shadow-sm border-amberbrown-500 bg-amberbrown-500/10'
+        : 'hover:border-darkbeige-700 hover:shadow-sm bg-white border-slate-200/90',
       statusBorderClass
     ]"
   >
     <!-- Top row: Room Number & Type & Status -->
     <div class="space-y-1.5">
-      <div class="flex items-center justify-between gap-1">
+      <div class="flex flex-wrap items-center justify-between gap-1.5">
         <div class="flex items-baseline space-x-1.5 min-w-0">
-          <span class="text-base font-black font-mono tracking-tight text-slate-900 group-hover:text-sky-700 transition">
+          <span class="text-base font-black font-mono tracking-tight text-slate-900 group-hover:text-amberbrown-400 transition">
             {{ room.roomNumber }}
           </span>
-          <span :class="roomTypeBadgeClass" class="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">
+          <span :class="roomTypeBadgeClass" class="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase flex-shrink-0">
             {{ roomTypeShort }}
           </span>
         </div>
-        <StatusBadge :status="room.status" />
+        <StatusBadge :status="room.status" class="whitespace-nowrap flex-shrink-0" />
       </div>
 
       <!-- Current Booking info if any -->
